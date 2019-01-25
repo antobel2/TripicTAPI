@@ -17,25 +17,22 @@ namespace Web_API.Controllers
         // GET api/values
         //Retourne la liste des posts de l'utilisateur
         [HttpGet]
-        [Route("api/posts")]
+        [Route("api/Posts")]
         public IEnumerable<Post> GetPosts()
         {
             return db.Posts;
         }
 
         //// GET api/values/5
-        ////Retourne la liste des posts associés (ID de l'activité recherchée)
-        //[Route("api/activity/{id}")]
-        //public IEnumerable<Post> GetPostsByActivity(int id)
+        //[Route("api/values/{id}")]
+        //public IEnumerable<Post> GetValues(int id)
         //{
-        //    return db.Posts.Where(x => x.Activity.Id == id)
-        //        .ToList();
         //}
 
         // POST api/values
         //Crée un post
         [HttpPost]
-        [Route("api/newPost")]
+        [Route("api/NewPost")]
         public IHttpActionResult Post([FromBody]newPost value)
         {
             Post po;
@@ -56,7 +53,7 @@ namespace Web_API.Controllers
             }
             
             po.Pictures = value.Pictures;
-            return CreatedAtRoute("api/newPost", new { id = po.Id }, po);
+            return CreatedAtRoute("api/NewPost", new { id = po.Id }, po);
         }
 
         //// PUT api/values/5

@@ -12,9 +12,12 @@ namespace Web_API.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        //Permet de retourner toutes les photos d'un user
         [HttpGet]
-        public HttpResponseMessage GetPictures()
+        [Route("api/Picture")]
+        public HttpResponseMessage GetPicture()
         {
+
             var data = db.Pictures.ToList()
                 .Select(p => new
                 {
@@ -24,6 +27,17 @@ namespace Web_API.Controllers
                 });
             return Request.CreateResponse(data);
             
+        }
+
+        //Permet de retourner les photos associées à un post
+        [HttpGet]
+        [Route("api/Post/{id}")]
+        public HttpResponseMessage GetPicturesByPost(int id)
+        {
+            var data = db.Pictures.Where(a => a.Post.Id == id)
+                .ToList();
+            return Request.CreateResponse(data);
+
         }
     }
 }
