@@ -1,0 +1,2 @@
+C:\Users\1028406\Source\Repos\webapi\Web API.Tests\obj\Debug\Web API.Tests.csprojAssemblyReference.cache
+C:\Users\1028406\Source\Repos\webapi\Web API.Tests\obj\Debug\Web API.Tests.csproj.CoreCompileInputs.cache

@@ -17,10 +17,10 @@ namespace Web_API.Tests.Controllers
         public void Get()
         {
             // Réorganiser
-            ValuesController controller = new ValuesController();
+            PostsController controller = new PostsController();
 
             // Agir
-            IEnumerable<string> result = controller.Get();
+            IEnumerable<string> result = controller.GetPosts();
 
             // Déclarer
             Assert.IsNotNull(result);
@@ -33,7 +33,7 @@ namespace Web_API.Tests.Controllers
         public void GetById()
         {
             // Réorganiser
-            ValuesController controller = new ValuesController();
+            PostsController controller = new PostsController();
 
             // Agir
             string result = controller.Get(5);
@@ -46,7 +46,7 @@ namespace Web_API.Tests.Controllers
         public void Post()
         {
             // Réorganiser
-            ValuesController controller = new ValuesController();
+            PostsController controller = new PostsController();
 
             // Agir
             controller.Post("value");
@@ -58,7 +58,7 @@ namespace Web_API.Tests.Controllers
         public void Put()
         {
             // Réorganiser
-            ValuesController controller = new ValuesController();
+            PostsController controller = new PostsController();
 
             // Agir
             controller.Put(5, "value");
@@ -70,7 +70,7 @@ namespace Web_API.Tests.Controllers
         public void Delete()
         {
             // Réorganiser
-            ValuesController controller = new ValuesController();
+            PostsController controller = new PostsController();
 
             // Agir
             controller.Delete(5);
