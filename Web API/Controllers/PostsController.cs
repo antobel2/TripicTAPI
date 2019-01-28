@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using Web_API.Models;
 
@@ -43,11 +44,10 @@ namespace Web_API.Controllers
         // POST api/values
         //Crée un post
         [HttpPost]
-        [Route("api/NewPost")]
-        public String Post([FromBody]newPost value)
+        [Route("api/Post/CreatePost")]
+        public String Post([FromBody]CreatePostDTO value)
         {
             Post po;
-
             if (ModelState.IsValid)
             {
                 if (value.Text != null)
@@ -60,7 +60,7 @@ namespace Web_API.Controllers
                     po = new Post();
                 }
 
-                //po.Pictures = value.Pictures;
+                po.Pictures = value.Pictures;
                 db.Posts.Add(po);
                 db.SaveChanges();
                 return po.Id.ToString();
@@ -69,6 +69,7 @@ namespace Web_API.Controllers
 
             return null;
         }
+
 
         //// PUT api/values/5
         //public void Put(int id, [FromBody]string value)

@@ -31,9 +31,10 @@ namespace Web_API.Models
         }
     }
 
-    public class newPost
+    public class CreatePostDTO
     {
-        //[Required]
+        [Required]
+        public int activityId { get; set; }
         public List<Picture> Pictures { get; set; }
         public string Text { get; set; }
     }

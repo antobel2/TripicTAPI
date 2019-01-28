@@ -31,7 +31,7 @@ namespace Web_API.Controllers
 
         //Permet de retourner les photos associées à un post
         [HttpGet]
-        [Route("api/Post/{id}")]
+        [Route("api/Picture/{id}")]
         public HttpResponseMessage GetPicturesByPost(int id)
         {
             var data = db.Pictures.Where(a => a.Post.Id == id)
