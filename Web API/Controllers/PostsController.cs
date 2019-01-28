@@ -21,8 +21,17 @@ namespace Web_API.Controllers
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
-            //return posts;
-            return db.Posts;
+            List<PostDTO> postsDTO = new List<PostDTO>();
+            foreach (Post post in db.Posts.ToList())
+            {
+                postsDTO.Add(new PostDTO()
+                {
+                    Id = post.Id,
+                    Pictures = post.Pictures,
+                    Text = post.Text
+                });
+            }
+            return postsDTO;
         }
 
         //// GET api/values/5

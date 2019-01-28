@@ -42,8 +42,6 @@ namespace Web_API.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public Activity Activity { get; set; }
         public List<Picture> Pictures { get; set; }
-        public ApplicationUser User { get; set; }
     }
 }
