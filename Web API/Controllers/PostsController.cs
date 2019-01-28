@@ -14,12 +14,14 @@ namespace Web_API.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        //static List<Post> posts = new List<Post> { new Post("First post"), new Post("Second post") };
         // GET api/values
         //Retourne la liste des posts de l'utilisateur
         [HttpGet]
         [Route("api/Posts")]
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<PostDTO> GetPosts()
         {
+            //return posts;
             return db.Posts;
         }
 
@@ -33,27 +35,30 @@ namespace Web_API.Controllers
         //Crée un post
         [HttpPost]
         [Route("api/NewPost")]
-        public IHttpActionResult Post([FromBody]newPost value)
+        public String Post([FromBody]newPost value)
         {
             Post po;
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                if (value.Text != null)
+                {
+                    po = new Post(value.Text);
+
+                }
+                else
+                {
+                    po = new Post();
+                }
+
+                //po.Pictures = value.Pictures;
+                db.Posts.Add(po);
+                db.SaveChanges();
+                return po.Id.ToString();
             }
-            
-            if (!value.Text.Equals(""))
-            {
-                po = new Post(value.Text);
-                
-            }
-            else
-            {
-                po = new Post();
-            }
-            
-            po.Pictures = value.Pictures;
-            return CreatedAtRoute("api/NewPost", new { id = po.Id }, po);
+
+
+            return null;
         }
 
         //// PUT api/values/5

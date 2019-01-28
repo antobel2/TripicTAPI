@@ -33,8 +33,17 @@ namespace Web_API.Models
 
     public class newPost
     {
-        [Required]
+        //[Required]
         public List<Picture> Pictures { get; set; }
         public string Text { get; set; }
+    }
+
+    public class PostDTO
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public Activity Activity { get; set; }
+        public List<Picture> Pictures { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }
