@@ -239,6 +239,7 @@
     <Compile Include="Controllers\PicturesController.cs" />
     <Compile Include="Controllers\PictureWithDatabaseStorageStrategiesController.cs" />
     <Compile Include="Controllers\PostsController.cs" />
+    <Compile Include="Controllers\TripsController.cs" />
     <Compile Include="Controllers\ValidateFilesAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

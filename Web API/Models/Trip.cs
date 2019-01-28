@@ -16,6 +16,10 @@ namespace Web_API.Models
         public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<Activity> Activities { get; set; }
 
+        public Trip()
+        {
+
+        }
         public Trip(string name)
         {
             Name = name;
