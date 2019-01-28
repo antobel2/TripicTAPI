@@ -60,7 +60,7 @@ namespace Web_API.Controllers
                     po = new Post();
                 }
 
-                //po.Pictures = value.Pictures;
+                po.Pictures = value.Pictures;
                 db.Posts.Add(po);
                 db.SaveChanges();
                 return po.Id.ToString();
