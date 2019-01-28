@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -45,26 +46,44 @@ namespace Web_API.Controllers
         //Crée un post
         [HttpPost]
         [Route("api/Post/CreatePost")]
-        public String Post([FromBody]CreatePostDTO value)
+        public String Post()
         {
-            Post po;
-            if (ModelState.IsValid)
+            var pictures = new List<Picture>();
+            var files = HttpContext.Current.Request.Files.Collection();
+            foreach (var file in files)
             {
-                if (value.Text != null)
+                using (var memoryStream = new MemoryStream())
                 {
-                    po = new Post(value.Text);
-
+                    file.InputStream.CopyTo(memoryStream);
+                    var bytes = memoryStream.ToArray();
+                    var picture = new PictureWithDatabaseStorageStrategy
+                    {
+                        MimeType = file.ContentType,
+                        FilenameWithExtension = file.FileName,
+                        Content = bytes
+                    };
+                    pictures.Add(picture);
                 }
-                else
-                {
-                    po = new Post();
-                }
-
-                po.Pictures = value.Pictures;
-                db.Posts.Add(po);
-                db.SaveChanges();
-                return po.Id.ToString();
             }
+
+            Post po;
+            //if (ModelState.IsValid)
+            //{
+            //    if (HttpContext.Current.Request.Form.Keys = null)
+            //    {
+            //        po = new Post(value.Text);
+
+            //    }
+            //    else
+            //    {
+            //        po = new Post();
+            //    }
+
+            //    po.Pictures = pictures;
+            //    db.Posts.Add(po);
+            //    db.SaveChanges();
+            //    return po.Id.ToString();
+            //}
 
 
             return null;
