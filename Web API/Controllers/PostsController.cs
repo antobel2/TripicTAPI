@@ -143,15 +143,15 @@ namespace Web_API.Controllers
                 foreach(CreatePictureDTO picDTO in value.CreatePicturesDTO)
                 {
                     Picture pi = new Picture();
-                    if(IsBase64String(picDTO.Base64))
-                    {
+                    //if(IsBase64String(picDTO.Base64))
+                    //{
                         pi.Base64 = picDTO.Base64;
                         pictures.Add(pi);
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    return null;
+                    //}
                 }
                 po.Pictures = pictures;
                 //TODO: Changer le user et l'activity
