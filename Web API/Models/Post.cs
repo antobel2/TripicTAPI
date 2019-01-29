@@ -7,15 +7,16 @@ using System.Web;
 
 namespace Web_API.Models
 {
+    //TODO: Décommenter
     public class Post
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Text { get; set; }
-        
+
         public virtual Activity Activity { get; set; }
-        
+
         public virtual List<Picture> Pictures { get; set; }
 
         public virtual ApplicationUser User { get; set; }
@@ -33,10 +34,10 @@ namespace Web_API.Models
 
     public class CreatePostDTO
     {
-        [Required]
-        public int ActivityId { get; set; }
-        [Required]
-        public int UserId { get; set; }
+        //[Required]
+        //public int ActivityId { get; set; }
+        //[Required]
+        //public int UserId { get; set; }
         public List<CreatePictureDTO> CreatePicturesDTO { get; set; }
         public string Text { get; set; }
     }
@@ -45,8 +46,8 @@ namespace Web_API.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public int ActivityId { get; set; }
+        //public int ActivityId { get; set; }
         public List<PictureDTO> PicturesDTO { get; set; }
-        public int UserId { get; set; }
+        //public int UserId { get; set; }
     }
 }
