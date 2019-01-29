@@ -15,7 +15,7 @@ namespace Web_API.Models
         [Required]
         public string Base64 { get; set; }
         //[Required]
-        //public string FilenameWithExtension { get; set; }
+        //public string Extension { get; set; }
         //[Required]
         //public string MimeType { get; set; }
 

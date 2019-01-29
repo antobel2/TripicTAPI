@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http;
 using Web_API.Models;
@@ -80,6 +81,44 @@ namespace Web_API.Controllers
         //{
         //}
 
+        //Méthode pour vérifier que la string reçue est bien une image en base 64
+        public static bool IsBase64String(string s)
+        {
+            s = s.Trim();
+            return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
+
+        }
+
+        //Obtient le type de fichier et l'extension du fichier et vérifie qu'il s'agit des bons types de fichiers
+        private static String extractMimeType(String s)
+        {
+            int extentionStartIndex = s.IndexOf('/');
+            int filetypeStartIndex = s.IndexOf(':');
+
+            String fileType = s.Substring(filetypeStartIndex + 1, extentionStartIndex);
+
+            if(fileType != "image")
+            {
+                return null;
+            }
+
+            return fileType;
+        }
+        private static String extractExtension(String s)
+        {
+            int extentionStartIndex = s.IndexOf('/');
+            int extensionEndIndex = s.IndexOf(';');
+
+            String fileType = s.Substring(extentionStartIndex + 1, extensionEndIndex);
+
+            if(fileType != "jpeg" && fileType != "gif" && fileType != "png")
+            {
+                return null;
+            }
+
+            return fileType;
+        }
+
         // POST api/values
         //Crée un post
         [HttpPost]
@@ -104,8 +143,15 @@ namespace Web_API.Controllers
                 foreach(CreatePictureDTO picDTO in value.CreatePicturesDTO)
                 {
                     Picture pi = new Picture();
-                    pi.Base64 = picDTO.Base64;
-                    pictures.Add(pi);
+                    if(IsBase64String(picDTO.Base64))
+                    {
+                        pi.Base64 = picDTO.Base64;
+                        pictures.Add(pi);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 po.Pictures = pictures;
                 //TODO: Changer le user et l'activity
