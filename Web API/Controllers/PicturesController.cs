@@ -22,8 +22,7 @@ namespace Web_API.Controllers
                 .Select(p => new
                 {
                     p.Id,
-                    p.MimeType,
-                    p.FilenameWithExtension
+                    p.Base64
                 });
             return Request.CreateResponse(data);
             

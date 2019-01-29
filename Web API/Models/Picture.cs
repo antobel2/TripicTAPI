@@ -13,9 +13,11 @@ namespace Web_API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public string FilenameWithExtension { get; set; }
-        [Required]
-        public string MimeType { get; set; }
+        public string Base64 { get; set; }
+        //[Required]
+        //public string FilenameWithExtension { get; set; }
+        //[Required]
+        //public string MimeType { get; set; }
 
         public virtual Post Post { get; set; }
     }
@@ -27,5 +29,16 @@ namespace Web_API.Models
     public class PictureWithDatabaseStorageStrategy : Picture
     {
         public byte[] Content { get; set; }
+    }
+
+    public class CreatePictureDTO
+    {
+        public string Base64 { get; set; }
+    }
+
+    public class PictureDTO
+    {
+        public int Id { get; set; }
+        public string Base64 { get; set; }
     }
 }

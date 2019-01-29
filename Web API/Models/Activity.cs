@@ -17,6 +17,9 @@ namespace Web_API.Models
 
         public virtual List<Post> Posts { get; set; }
 
+        public Activity()
+        {
+        }
         public Activity(string name)
         {
             Name = name;

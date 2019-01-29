@@ -13,6 +13,7 @@ namespace Web_API.Models
         public ApplicationDbContext()
             :base("DefaultConnection", throwIfV1Schema: false)
         {
+            Database.SetInitializer<ApplicationDbContext>(new DropCreateDatabaseIfModelChanges<ApplicationDbContext>());
         }
 
         public static ApplicationDbContext Create()
@@ -30,28 +31,22 @@ namespace Web_API.Models
     {
         protected override void Seed(ApplicationDbContext context)
         {
+            //TODO: Changer les valeurs hardcodées
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            var users = new[]
-            {
+            var defaultUser = 
                 new ApplicationUser
                 {
-                    Id = "a",
+                    Id = "1",
                     UserName = "a@b.c",
                     Email = "a@b.c"
-                },
-                new ApplicationUser
-                {
-                    Id = "b",
-                    UserName = "b@b.c",
-                    Email = "b@b.c"
-                }
-            };
-            foreach (var user in users)
-                context.Users.Add(user);
+                };
+
+            var defaultActivity = new Activity("Super Activité");
+            context.Users.Add(defaultUser);
+            context.Activities.Add(defaultActivity);
             context.SaveChanges();
-            foreach (var user in users)
-                userManager.AddPassword(user.Id, "Passw0rd");
+            userManager.AddPassword(defaultUser.Id, "Passw0rd");
         }
     }
 }

@@ -26,14 +26,52 @@ namespace Web_API.Controllers
             List<PostDTO> postsDTO = new List<PostDTO>();
             foreach (Post post in db.Posts.ToList())
             {
+                var pictures = new List<PictureDTO>();
+                foreach (Picture picture in post.Pictures)
+                {
+                    PictureDTO pi = new PictureDTO();
+                    pi.Base64 = picture.Base64;
+                    pi.Id = picture.Id;
+                    pictures.Add(pi);
+                }
                 postsDTO.Add(new PostDTO()
                 {
                     Id = post.Id,
-                    Pictures = post.Pictures,
-                    Text = post.Text
+                    PicturesDTO = pictures,
+                    Text = post.Text,
+                    //TODO: Changer le user et l'activity
+                    //UserId = int.Parse(post.User.Id),
+                    //ActivityId = post.Activity.Id
+                    //Activity = new Activity("Super Activité")
                 });
             }
             return postsDTO;
+        }
+
+        //Méthode de test pour obtenir un byte[] à partir d'une image dans postman
+        [HttpPost]
+        [Route("api/Picturetobyte")]
+        public List<byte[]> GetByte()
+        {
+            var pictures = new List<Picture>();
+            var files = HttpContext.Current.Request.Files.Collection();
+            List<byte[]> picsBytes = new List<byte[]>();
+            foreach (var file in files)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.InputStream.CopyTo(memoryStream);
+                    var bytes = memoryStream.ToArray();
+                    var picture = new PictureWithDatabaseStorageStrategy
+                    {
+                        Content = bytes
+                    };
+                    pictures.Add(picture);
+                    picsBytes.Add(picture.Content);
+                }
+            }
+            
+            return picsBytes;
         }
 
         //// GET api/values/5
@@ -46,44 +84,38 @@ namespace Web_API.Controllers
         //Crée un post
         [HttpPost]
         [Route("api/Post/CreatePost")]
-        public String Post()
+        public String Post([FromBody]CreatePostDTO value)
         {
             var pictures = new List<Picture>();
-            var files = HttpContext.Current.Request.Files.Collection();
-            foreach (var file in files)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    file.InputStream.CopyTo(memoryStream);
-                    var bytes = memoryStream.ToArray();
-                    var picture = new PictureWithDatabaseStorageStrategy
-                    {
-                        MimeType = file.ContentType,
-                        FilenameWithExtension = file.FileName,
-                        Content = bytes
-                    };
-                    pictures.Add(picture);
-                }
-            }
-
             Post po;
-            //if (ModelState.IsValid)
-            //{
-            //    if (HttpContext.Current.Request.Form.Keys = null)
-            //    {
-            //        po = new Post(value.Text);
 
-            //    }
-            //    else
-            //    {
-            //        po = new Post();
-            //    }
+            if (ModelState.IsValid)
+            {
+                if (value.Text != null)
+                {
+                    po = new Post(value.Text);
 
-            //    po.Pictures = pictures;
-            //    db.Posts.Add(po);
-            //    db.SaveChanges();
-            //    return po.Id.ToString();
-            //}
+                }
+                else
+                {
+                    po = new Post();
+                }
+
+                foreach(CreatePictureDTO picDTO in value.CreatePicturesDTO)
+                {
+                    Picture pi = new Picture();
+                    pi.Base64 = picDTO.Base64;
+                    pictures.Add(pi);
+                }
+                po.Pictures = pictures;
+                //TODO: Changer le user et l'activity
+                //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
+                //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
+                //po.Activity = new Activity("Super Activité");
+                db.Posts.Add(po);
+                db.SaveChanges();
+                return po.Id.ToString();
+            }
 
 
             return null;
