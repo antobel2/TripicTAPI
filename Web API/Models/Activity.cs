@@ -25,4 +25,9 @@ namespace Web_API.Models
             Name = name;
         }
     }
+    public class CreateActivityDTO
+    {
+        public string Name { get; set; }
+        public int VoyageId { get; set; }
+    }
 }

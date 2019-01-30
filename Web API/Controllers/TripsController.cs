@@ -53,6 +53,7 @@ namespace Web_API.Controllers
                     trip.Name = trip.Name + " (" + DateTime.Now + ")";
                 }
             }
+
             db.Trips.Add(trip);
             db.SaveChanges();
 
