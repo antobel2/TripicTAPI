@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Web_API.Models;
 
 namespace Web_API.Controllers
@@ -178,6 +179,42 @@ namespace Web_API.Controllers
         // DELETE api/values/5
         public void Delete(int id)
         {
+        }
+
+        [Route("api/Posts/GetPostsForActivity")]
+        [HttpGet]
+        [ResponseType(typeof(List<PostDTO>))]
+        public IHttpActionResult GetPostsForActivity(int id)
+        {
+            Activity activity = db.Activities.Find(id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            List<PostDTO> results = new List<PostDTO>();
+            foreach (Post postInActivity in activity.Posts)
+            {
+                //transformer post en postDTO
+                PostDTO currentPost = new PostDTO
+                {
+                    Id = postInActivity.Id,
+                    Text = postInActivity.Text,
+                    PicturesDTO = new List<PictureDTO>()
+                };
+                //ajouter toutes les photos du post à la liste de photo du dto
+                foreach (Picture picturesInPost in postInActivity.Pictures)
+                {
+                    currentPost.PicturesDTO.Add(new PictureDTO
+                    {
+                        Id = picturesInPost.Id,
+                        Base64 = picturesInPost.Base64
+                    });
+                }
+                results.Add(currentPost);
+            }
+
+            return Ok(results);
         }
     }
 }
