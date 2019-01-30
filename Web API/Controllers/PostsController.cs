@@ -24,6 +24,8 @@ namespace Web_API.Controllers
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
+            if (db.Posts.Count() == 0)
+                return null;
             List<PostDTO> postsDTO = new List<PostDTO>();
             foreach (Post post in db.Posts.ToList())
             {
@@ -84,9 +86,12 @@ namespace Web_API.Controllers
         //Méthode pour vérifier que la string reçue est bien une image en base 64
         public static bool IsBase64String(string s)
         {
-            s = s.Trim();
-            return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
-
+            int base64StringStart = s.IndexOf(',');
+            string finalS = s.Substring(base64StringStart + 1).Trim();
+            if ((finalS.Length % 4 == 0) && Regex.IsMatch(finalS, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
+                return true;
+            else
+                return false;
         }
 
         //Obtient le type de fichier et l'extension du fichier et vérifie qu'il s'agit des bons types de fichiers
@@ -95,7 +100,7 @@ namespace Web_API.Controllers
             int extentionStartIndex = s.IndexOf('/');
             int filetypeStartIndex = s.IndexOf(':');
 
-            String fileType = s.Substring(filetypeStartIndex + 1, extentionStartIndex);
+            String fileType = s.Substring(filetypeStartIndex + 1, extentionStartIndex - (filetypeStartIndex + 1));
 
             if(fileType != "image")
             {
@@ -109,7 +114,7 @@ namespace Web_API.Controllers
             int extentionStartIndex = s.IndexOf('/');
             int extensionEndIndex = s.IndexOf(';');
 
-            String fileType = s.Substring(extentionStartIndex + 1, extensionEndIndex);
+            String fileType = s.Substring(extentionStartIndex + 1, extensionEndIndex - (extentionStartIndex + 1));
 
             if(fileType != "jpeg" && fileType != "gif" && fileType != "png")
             {
@@ -131,28 +136,25 @@ namespace Web_API.Controllers
             if (ModelState.IsValid)
             {
                 if (value.Text != null)
-                {
                     po = new Post(value.Text);
-
-                }
                 else
-                {
                     po = new Post();
-                }
 
-                foreach(CreatePictureDTO picDTO in value.CreatePicturesDTO)
+                if (value.CreatePicturesDTO != null)
                 {
-                    Picture pi = new Picture();
-                    //if(IsBase64String(picDTO.Base64))
-                    //{
-                        pi.Base64 = picDTO.Base64;
-                        pictures.Add(pi);
-                    //}
-                    //else
-                    //{
-                    //    return null;
-                    //}
+                    foreach (CreatePictureDTO picDTO in value.CreatePicturesDTO)
+                    {
+                        Picture pi = new Picture();
+                        if (picDTO.Base64 == null || picDTO.Base64.Trim() == "" || !IsBase64String(picDTO.Base64) || extractExtension(picDTO.Base64) == null || extractMimeType(picDTO.Base64) == null)
+                            break;
+                        else
+                        {
+                            pi.Base64 = picDTO.Base64;
+                            pictures.Add(pi);
+                        }
+                    }
                 }
+                
                 po.Pictures = pictures;
                 //TODO: Changer le user et l'activity
                 //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
