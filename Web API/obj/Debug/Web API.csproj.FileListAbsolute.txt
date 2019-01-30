@@ -728,3 +728,6 @@ C:\Users\1447500\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CoreCompileInpu
 C:\Users\1447500\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CopyComplete
 C:\Users\1447500\Desktop\webapi\Web API\obj\Debug\Web API.dll
 C:\Users\1447500\Desktop\webapi\Web API\obj\Debug\Web API.pdb
+C:\Users\1028406\Desktop\Repo\webapi\Web API\bin\System.Web.Cors.dll
+C:\Users\1028406\Desktop\Repo\webapi\Web API\bin\System.Web.Http.Cors.dll
+C:\Users\1028406\Desktop\Repo\webapi\Web API\bin\System.Web.Http.Cors.xml

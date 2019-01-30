@@ -13,7 +13,7 @@ using Web_API.Models;
 
 namespace Web_API.Controllers
 {
-   // [Authorize]
+    // [Authorize]
     public class PostsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -74,7 +74,7 @@ namespace Web_API.Controllers
                     picsBytes.Add(picture.Content);
                 }
             }
-            
+
             return picsBytes;
         }
 
@@ -103,7 +103,7 @@ namespace Web_API.Controllers
 
             String fileType = s.Substring(filetypeStartIndex + 1, extentionStartIndex - (filetypeStartIndex + 1));
 
-            if(fileType != "image")
+            if (fileType != "image")
             {
                 return null;
             }
@@ -117,7 +117,7 @@ namespace Web_API.Controllers
 
             String fileType = s.Substring(extentionStartIndex + 1, extensionEndIndex - (extentionStartIndex + 1));
 
-            if(fileType != "jpeg" && fileType != "gif" && fileType != "png")
+            if (fileType != "jpeg" && fileType != "gif" && fileType != "png")
             {
                 return null;
             }
@@ -129,46 +129,47 @@ namespace Web_API.Controllers
         //Crée un post
         [HttpPost]
         [Route("api/Post/CreatePost")]
-        public String Post([FromBody]CreatePostDTO value)
+        public HttpResponseMessage Post([FromBody]CreatePostDTO value)
         {
             var pictures = new List<Picture>();
             Post po;
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (value.Text != null)
-                    po = new Post(value.Text);
-                else
-                    po = new Post();
-
-                if (value.CreatePicturesDTO != null)
-                {
-                    foreach (CreatePictureDTO picDTO in value.CreatePicturesDTO)
-                    {
-                        Picture pi = new Picture();
-                        if (picDTO.Base64 == null || picDTO.Base64.Trim() == "" || !IsBase64String(picDTO.Base64) || extractExtension(picDTO.Base64) == null || extractMimeType(picDTO.Base64) == null)
-                            break;
-                        else
-                        {
-                            pi.Base64 = picDTO.Base64;
-                            pictures.Add(pi);
-                        }
-                    }
-                }
-                
-                po.Pictures = pictures;
-                //TODO: Changer le user et l'activity
-                //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
-                //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
-                //po.Activity = new Activity("Super Activité");
-                db.Posts.Add(po);
-                db.SaveChanges();
-                return po.Id.ToString();
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
+            if (value.Text != null)
+                po = new Post(value.Text);
+            else
+                po = new Post();
 
-            return null;
+            if (value.CreatePicturesDTO != null)
+            {
+                foreach (CreatePictureDTO picDTO in value.CreatePicturesDTO)
+                {
+                    Picture pi = new Picture();
+                    if (picDTO.Base64 == null || picDTO.Base64.Trim() == "" || !IsBase64String(picDTO.Base64) || extractExtension(picDTO.Base64) == null || extractMimeType(picDTO.Base64) == null)
+                        break;
+                    else
+                    {
+                        pi.Base64 = picDTO.Base64;
+                        pictures.Add(pi);
+                    }
+                }
+            }
+
+            po.Pictures = pictures;
+            //TODO: Changer le user et l'activity
+            //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
+            //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
+            //po.Activity = new Activity("Super Activité");
+            db.Posts.Add(po);
+            db.SaveChanges();
+            return Request.CreateResponse(po.Id);
         }
+    
+        
 
 
         //// PUT api/values/5
