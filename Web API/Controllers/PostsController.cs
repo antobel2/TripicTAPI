@@ -215,7 +215,7 @@ namespace Web_API.Controllers
                 results.Add(currentPost);
             }
 
-            return Ok(results);
+            return Request.CreateResponse(results);
         }
     }
 }
