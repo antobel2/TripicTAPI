@@ -25,8 +25,8 @@ namespace Web_API.Controllers
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
-            if (db.Posts.Count() == 0)
-                return null;
+            //if (db.Posts.Count() == 0)
+            //    return null;
             List<PostDTO> postsDTO = new List<PostDTO>();
             foreach (Post post in db.Posts.ToList())
             {
