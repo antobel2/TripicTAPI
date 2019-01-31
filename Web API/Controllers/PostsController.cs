@@ -185,12 +185,12 @@ namespace Web_API.Controllers
         [Route("api/Posts/GetPostsForActivity")]
         [HttpGet]
         [ResponseType(typeof(List<PostDTO>))]
-        public IHttpActionResult GetPostsForActivity(int id)
+        public HttpResponseMessage GetPostsForActivity(int id)
         {
             Activity activity = db.Activities.Find(id);
             if (activity == null)
             {
-                return NotFound();
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The activity was not found");
             }
 
             List<PostDTO> results = new List<PostDTO>();
