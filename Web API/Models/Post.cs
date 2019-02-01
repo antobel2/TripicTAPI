@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +14,12 @@ namespace Web_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         public string Text { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public bool IsValid { get; set; }
 
         public virtual Activity Activity { get; set; }
 
@@ -23,12 +29,7 @@ namespace Web_API.Models
 
         public Post()
         {
-
-        }
-
-        public Post(string text)
-        {
-            Text = text;
+            Date = DateTime.Now;
         }
     }
 
@@ -38,16 +39,15 @@ namespace Web_API.Models
         //public int ActivityId { get; set; }
         //[Required]
         //public int UserId { get; set; }
-        public List<CreatePictureDTO> CreatePicturesDTO { get; set; }
+        public List<PictureDTO> PicturesDTO { get; set; }
         public string Text { get; set; }
     }
 
     public class PostDTO
     {
-        public int Id { get; set; }
         public string Text { get; set; }
+        public int PictureNumber { get; set; }
         //public int ActivityId { get; set; }
-        public List<PictureDTO> PicturesDTO { get; set; }
         //public int UserId { get; set; }
     }
 }

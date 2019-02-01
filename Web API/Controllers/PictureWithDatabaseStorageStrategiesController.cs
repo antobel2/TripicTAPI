@@ -51,7 +51,20 @@ namespace Web_API.Controllers
         //    }));
         //}
 
-      
+      if (value.CreatePicturesDTO != null)
+            {
+                foreach (CreatePictureDTO picDTO in value.CreatePicturesDTO)
+                {
+                    Picture pi = new Picture();
+                    if (picDTO.Base64 == null || picDTO.Base64.Trim() == "" || !IsBase64String(picDTO.Base64) || extractExtension(picDTO.Base64) == null || extractMimeType(picDTO.Base64) == null)
+                        break;
+                    else
+                    {
+                        pi.Base64 = picDTO.Base64;
+                        pictures.Add(pi);
+                    }
+}
+            }
         //[HttpGet]
         //public HttpResponseMessage GetPicture(int id)
         //{

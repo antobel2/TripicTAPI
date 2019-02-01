@@ -38,7 +38,7 @@ namespace Web_API.Models
 
     public class PictureDTO
     {
-        public int Id { get; set; }
         public string Base64 { get; set; }
+        public int PostId { get; set; }
     }
 }

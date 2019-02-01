@@ -129,37 +129,26 @@ namespace Web_API.Controllers
         //Crée un post
         [HttpPost]
         [Route("api/Post/CreatePost")]
-        public HttpResponseMessage Post([FromBody]CreatePostDTO value)
+        public HttpResponseMessage Post([FromBody]PostDTO value)
         {
-            var pictures = new List<Picture>();
-            Post po;
-
             if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            if (value.Text != null)
-                po = new Post(value.Text);
-            else
-                po = new Post();
+            Post po = new Post();
 
-            if (value.CreatePicturesDTO != null)
+            if (value.Text != null && value.Text.Trim() != "")
             {
-                foreach (CreatePictureDTO picDTO in value.CreatePicturesDTO)
-                {
-                    Picture pi = new Picture();
-                    if (picDTO.Base64 == null || picDTO.Base64.Trim() == "" || !IsBase64String(picDTO.Base64) || extractExtension(picDTO.Base64) == null || extractMimeType(picDTO.Base64) == null)
-                        break;
-                    else
-                    {
-                        pi.Base64 = picDTO.Base64;
-                        pictures.Add(pi);
-                    }
-                }
+                po.Text = value.Text;
             }
 
-            po.Pictures = pictures;
+            if (value.PictureNumber != 0)
+            {
+                po.Pictures = new List<Picture>();
+                po.IsValid = false;
+            }
+            
             //TODO: Changer le user et l'activity
             //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
             //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
@@ -168,8 +157,41 @@ namespace Web_API.Controllers
             db.SaveChanges();
             return Request.CreateResponse(po.Id);
         }
-    
-        
+
+        public async Task<IHttpActionResult> Post2(ClaimsEditViewModel model, int someValue)
+        {
+            //pseudo code
+            if (someValue < 0)
+            {
+                return BadRequest();
+            }
+
+            // SaveAsync is awaitable, returns Task<HttpActionResult>
+            return await SaveAsync(model, "Index", "Claims", "Claim successfully saved.");
+        }
+
+        [HttpPost]
+        public HttpResponseMessage AddPicture([FromBody]PictureDTO value)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            Picture pi = new Picture();
+
+            if (value.Base64 == null || value.Base64.Trim() == "")
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
+            else if (!IsBase64String(value.Base64))
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
+            else if (extractExtension(value.Base64) == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
+            else if (extractMimeType(value.Base64) == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
+
+            pi.Base64 = value.Base64;
+            pi.Post
+        }
 
 
         //// PUT api/values/5
