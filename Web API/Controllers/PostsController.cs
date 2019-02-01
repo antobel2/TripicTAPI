@@ -71,8 +71,8 @@ namespace Web_API.Controllers
                 po.IsValid = true;
 
             //TODO: Changer le user et l'activity
-            po.User = db.Users.Find(1);
-            po.Activity = db.Activities.Find(1);
+            //po.User = db.Users.Find(1);
+            //po.Activity = db.Activities.Find(1);
             db.Posts.Add(po);
             db.SaveChanges();
             return Request.CreateResponse(po.Id);

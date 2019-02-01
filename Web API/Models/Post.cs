@@ -15,6 +15,7 @@ namespace Web_API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [MaxLength(250)]
         public string Text { get; set; }
 
         [Required]
@@ -48,7 +49,9 @@ namespace Web_API.Models
 
     public class CreatePostDTO
     {
+        [MaxLength(250)]
         public string Text { get; set; }
+        [Range(minimum: 0, maximum: 25)]
         public int PictureNumber { get; set; }
         //public int ActivityId { get; set; }
         //public int UserId { get; set; }
