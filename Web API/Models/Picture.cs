@@ -14,16 +14,8 @@ namespace Web_API.Models
         public int Id { get; set; }
         [Required]
         public string Base64 { get; set; }
-        //[Required]
-        //public string Extension { get; set; }
-        //[Required]
-        //public string MimeType { get; set; }
 
         public virtual Post Post { get; set; }
-    }
-    public class PictureWithNetworkStorageStrategy : Picture
-    {
-        public Guid StorageKey { get; set; }
     }
 
     public class PictureWithDatabaseStorageStrategy : Picture
@@ -34,6 +26,7 @@ namespace Web_API.Models
     public class PictureDTO
     {
         public string Base64 { get; set; }
+        public int Id { get; set; }
     }
 
     public class CreatePictureDTO

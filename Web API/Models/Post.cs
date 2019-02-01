@@ -17,7 +17,8 @@ namespace Web_API.Models
 
         public string Text { get; set; }
 
-        public DateTime Date { get; set; }
+        [Required]
+        public string Date { get; set; }
 
         public bool IsValid { get; set; }
 
@@ -29,7 +30,7 @@ namespace Web_API.Models
 
         public Post()
         {
-            Date = DateTime.Now;
+            Date = DateTime.Now.ToString("dd/MM/yy H:mm");
         }
     }
 
@@ -39,15 +40,16 @@ namespace Web_API.Models
         //public int ActivityId { get; set; }
         //[Required]
         //public int UserId { get; set; }
+        public int Id { get; set; }
         public List<PictureDTO> PicturesDTO { get; set; }
         public string Text { get; set; }
+        public string Date { get; set; }
     }
 
     public class CreatePostDTO
     {
         public string Text { get; set; }
         public int PictureNumber { get; set; }
-        public List<CreatePictureDTO> PicturesDTO { get; set; }
         //public int ActivityId { get; set; }
         //public int UserId { get; set; }
     }

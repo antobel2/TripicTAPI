@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Web.Http;
 using Web_API.Models;
 
@@ -17,7 +18,6 @@ namespace Web_API.Controllers
         [Route("api/Picture")]
         public HttpResponseMessage GetPicture()
         {
-
             var data = db.Pictures.ToList()
                 .Select(p => new
                 {
@@ -25,7 +25,78 @@ namespace Web_API.Controllers
                     p.Base64
                 });
             return Request.CreateResponse(data);
-            
+        }
+
+        //Méthode pour vérifier que la string reçue est bien une image en base 64
+        //Doit être un multiple de 4, contenir seulement les caractères spécifiés et peut terminer par '='
+        public static bool IsBase64String(string s)
+        {
+            int base64StringStart = s.IndexOf(',');
+            string finalS = s.Substring(base64StringStart + 1).Trim();
+            if ((finalS.Length % 4 == 0) && Regex.IsMatch(finalS, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
+                return true;
+            else
+                return false;
+        }
+
+        //Obtient le type de fichier du fichier et vérifie qu'il s'agit des bons types de fichiers
+        private static String extractMimeType(String s)
+        {
+            //Détermine où se trouve la string requise
+            int extentionStartIndex = s.IndexOf('/');
+            int filetypeStartIndex = s.IndexOf(':');
+
+            String fileType = s.Substring(filetypeStartIndex + 1, extentionStartIndex - (filetypeStartIndex + 1));
+
+            if (fileType != "image")
+            {
+                return null;
+            }
+
+            return fileType;
+        }
+
+        //Obtient l'extension du fichier et vérifie qu'elle est valide
+        private static String extractExtension(String s)
+        {
+            //Détermine où se trouve la string requise
+            int extentionStartIndex = s.IndexOf('/');
+            int extensionEndIndex = s.IndexOf(';');
+
+            String fileType = s.Substring(extentionStartIndex + 1, extensionEndIndex - (extentionStartIndex + 1));
+
+            if (fileType != "jpeg" && fileType != "gif" && fileType != "png")
+            {
+                return null;
+            }
+
+            return fileType;
+        }
+
+        //Crée la photo après avoir vérifie qu'elle passe toutes les étapes de validation
+        [HttpPost]
+        [Route("api/Picture/CreatePicture")]
+        public HttpResponseMessage CreatePicture([FromBody]CreatePictureDTO value)
+        {
+            //Renvoie une réponse Http avec un message d'erreur si la vérification ne passe pas
+            if (value.Base64 == null || value.Base64.Trim() == "")
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
+            else if (!IsBase64String(value.Base64))
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
+            else if (extractExtension(value.Base64) == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
+            else if (extractMimeType(value.Base64) == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
+            //Si tout passe, crée la photo à partir du body de la réponse et l'ajoute à la bd
+            else
+            {
+                db.Pictures.Add(new Picture()
+                {
+                    Base64 = value.Base64,
+                    Post = db.Posts.Find(value.PostId)
+                });
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
         }
 
         //Permet de retourner les photos associées à un post
