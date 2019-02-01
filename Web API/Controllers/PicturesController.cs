@@ -78,8 +78,11 @@ namespace Web_API.Controllers
         [Route("api/Picture/CreatePicture")]
         public HttpResponseMessage CreatePicture([FromBody]CreatePictureDTO value)
         {
+            if(value == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Il n'y a pas d'image");
+
             //Renvoie une réponse Http avec un message d'erreur si la vérification ne passe pas
-            if (value.Base64 == null || value.Base64.Trim() == "")
+            else if (value.Base64 == null || value.Base64.Trim() == "")
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
             else if (!IsBase64String(value.Base64))
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
@@ -90,11 +93,14 @@ namespace Web_API.Controllers
             //Si tout passe, crée la photo à partir du body de la réponse et l'ajoute à la bd
             else
             {
-                db.Pictures.Add(new Picture()
-                {
-                    Base64 = value.Base64,
-                    Post = db.Posts.Find(value.PostId)
-                });
+                Picture p = new Picture();
+                db.Pictures.Add(p);
+                p.Base64 = value.Base64;
+                p.Post = db.Posts.Find(value.PostId);
+
+                if (p.Post.PicNumber == p.Post.Pictures.Count)
+                    p.Post.IsValid = true;
+                db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
         }

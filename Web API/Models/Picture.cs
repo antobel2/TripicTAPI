@@ -31,7 +31,9 @@ namespace Web_API.Models
 
     public class CreatePictureDTO
     {
+        [Required]
         public string Base64 { get; set; }
+        [Required]
         public int PostId { get; set; }
     }
 }

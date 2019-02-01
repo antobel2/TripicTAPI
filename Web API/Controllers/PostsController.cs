@@ -25,28 +25,30 @@ namespace Web_API.Controllers
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
-            //if (db.Posts.Count() == 0)
-            //    return null;
             List<PostDTO> postsDTO = new List<PostDTO>();
             foreach (Post post in db.Posts.ToList())
             {
-                var pictures = new List<PictureDTO>();
-                foreach (Picture picture in post.Pictures)
+                if(post.IsValid == true)
                 {
-                    PictureDTO pi = new PictureDTO();
-                    pi.Base64 = picture.Base64;
-                    //pi.Id = picture.Id;
-                    pictures.Add(pi);
+                    var pictures = new List<PictureDTO>();
+                    foreach (Picture picture in post.Pictures)
+                    {
+                        PictureDTO pi = new PictureDTO();
+                        pi.Base64 = picture.Base64;
+                        pi.Id = picture.Id;
+                        pictures.Add(pi);
+                    }
+                    postsDTO.Add(new PostDTO()
+                    {
+                        Id = post.Id,
+                        PicturesDTO = pictures,
+                        Text = post.Text,
+                        //TODO: Changer le user et l'activity
+                        //UserId = int.Parse(post.User.Id),
+                        //ActivityId = post.Activity.Id
+                    });
                 }
-                postsDTO.Add(new PostDTO()
-                {
-                    Id = post.Id,
-                    PicturesDTO = pictures,
-                    Text = post.Text,
-                    //TODO: Changer le user et l'activity
-                    //UserId = int.Parse(post.User.Id),
-                    //ActivityId = post.Activity.Id
-                });
+                
             }
             return postsDTO;
         }
@@ -65,7 +67,8 @@ namespace Web_API.Controllers
             if (value.Text != null && value.Text.Trim() != "" && value.Text.Length <= 250)
                 po.Text = value.Text;
 
-            if (value.PictureNumber != 0)
+            po.PicNumber = value.PictureNumber;
+            if (po.PicNumber != 0)
                 po.IsValid = false;
             else
                 po.IsValid = true;

@@ -23,6 +23,8 @@ namespace Web_API.Models
 
         public bool IsValid { get; set; }
 
+        public int PicNumber { get; set; }
+
         public virtual Activity Activity { get; set; }
 
         public virtual List<Picture> Pictures { get; set; }
@@ -53,7 +55,7 @@ namespace Web_API.Models
         public string Text { get; set; }
         [Range(minimum: 0, maximum: 25)]
         public int PictureNumber { get; set; }
-        //public int ActivityId { get; set; }
-        //public int UserId { get; set; }
+        public int ActivityId { get; set; }
+        public int UserId { get; set; }
     }
 }
