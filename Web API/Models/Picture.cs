@@ -31,12 +31,12 @@ namespace Web_API.Models
         public byte[] Content { get; set; }
     }
 
-    public class CreatePictureDTO
+    public class PictureDTO
     {
         public string Base64 { get; set; }
     }
 
-    public class PictureDTO
+    public class CreatePictureDTO
     {
         public string Base64 { get; set; }
         public int PostId { get; set; }

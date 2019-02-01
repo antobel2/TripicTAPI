@@ -33,7 +33,7 @@ namespace Web_API.Models
         }
     }
 
-    public class CreatePostDTO
+    public class PostDTO
     {
         //[Required]
         //public int ActivityId { get; set; }
@@ -43,10 +43,11 @@ namespace Web_API.Models
         public string Text { get; set; }
     }
 
-    public class PostDTO
+    public class CreatePostDTO
     {
         public string Text { get; set; }
         public int PictureNumber { get; set; }
+        public List<CreatePictureDTO> PicturesDTO { get; set; }
         //public int ActivityId { get; set; }
         //public int UserId { get; set; }
     }

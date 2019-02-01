@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -19,8 +20,8 @@ namespace Web_API.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         //static List<Post> posts = new List<Post> { new Post("First post"), new Post("Second post") };
-        // GET api/values
-        //Retourne la liste des posts de l'utilisateur
+       // GET api/values
+       //Retourne la liste des posts de l'utilisateur
         [HttpGet]
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
@@ -35,12 +36,12 @@ namespace Web_API.Controllers
                 {
                     PictureDTO pi = new PictureDTO();
                     pi.Base64 = picture.Base64;
-                    pi.Id = picture.Id;
+                    //pi.Id = picture.Id;
                     pictures.Add(pi);
                 }
                 postsDTO.Add(new PostDTO()
                 {
-                    Id = post.Id,
+                    //Id = post.Id,
                     PicturesDTO = pictures,
                     Text = post.Text,
                     //TODO: Changer le user et l'activity
@@ -127,71 +128,95 @@ namespace Web_API.Controllers
 
         // POST api/values
         //Crée un post
-        [HttpPost]
-        [Route("api/Post/CreatePost")]
-        public HttpResponseMessage Post([FromBody]PostDTO value)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
+        //[HttpPost]
+        //[Route("api/Post/CreatePost")]
+        //public async Task<HttpResponseMessage> CreatePost([FromBody]CreatePostDTO value)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+        //    }
 
-            Post po = new Post();
+        //    Post po = new Post();
 
-            if (value.Text != null && value.Text.Trim() != "")
-            {
-                po.Text = value.Text;
-            }
+        //    if (value.Text != null && value.Text.Trim() != "")
+        //    {
+        //        po.Text = value.Text;
+        //    }
 
-            if (value.PictureNumber != 0)
-            {
-                po.Pictures = new List<Picture>();
-                po.IsValid = false;
-            }
+        //    if (value.PictureNumber != 0)
+        //    {
+        //        po.Pictures = new List<Picture>();
+        //        po.IsValid = false;
+                
+        //        foreach(CreatePictureDTO pic in value.PicturesDTO)
+        //        {
+        //            HttpResponseMessage x =  await CreatePicture(pic);
+        //            value.PicturesDTO.Add(x);
+        //        }
+        //    }
             
-            //TODO: Changer le user et l'activity
-            //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
-            //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
-            //po.Activity = new Activity("Super Activité");
-            db.Posts.Add(po);
-            db.SaveChanges();
-            return Request.CreateResponse(po.Id);
-        }
+        //    //TODO: Changer le user et l'activity
+        //    //po.UserId = db.Users.FirstOrDefault(x => x.Id == value.UserId.ToString());
+        //    //po.Activity = db.Activities.FirstOrDefault(x => x.Id == value.ActivityId);
+        //    //po.Activity = new Activity("Super Activité");
+        //    db.Posts.Add(po);
+        //    db.SaveChanges();
+        //    return Request.CreateResponse(po.Id);
+        //}
 
-        public async Task<IHttpActionResult> Post2(ClaimsEditViewModel model, int someValue)
-        {
-            //pseudo code
-            if (someValue < 0)
-            {
-                return BadRequest();
-            }
+        //public async Task<HttpResponseMessage> CreatePicture([FromBody]CreatePictureDTO value)
+        //{
+        //    Picture pi = new Picture();
+        //    string errorMessage;
 
-            // SaveAsync is awaitable, returns Task<HttpActionResult>
-            return await SaveAsync(model, "Index", "Claims", "Claim successfully saved.");
-        }
+        //    var message = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        //    {
+        //        if (value.Base64 == null || value.Base64.Trim() == "")
+        //            errorMessage = "We cannot use IDs greater than 100.";
+        //        else if (!IsBase64String(value.Base64))
+        //        Content = new StringContent("We cannot use IDs greater than 100.")
+        //    };
+        //    throw new HttpResponseException(message);
 
-        [HttpPost]
-        public HttpResponseMessage AddPicture([FromBody]PictureDTO value)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
+        //    if (value.Base64 == null || value.Base64.Trim() == "")
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
+        //    else if (!IsBase64String(value.Base64))
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
+        //    else if (extractExtension(value.Base64) == null)
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
+        //    else if (extractMimeType(value.Base64) == null)
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
 
-            Picture pi = new Picture();
+        //    pi.Base64 = value.Base64;
+        //    pi.Post = db.Posts.Find(value.PostId);
+        //    db.Pictures.Add(pi);
 
-            if (value.Base64 == null || value.Base64.Trim() == "")
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
-            else if (!IsBase64String(value.Base64))
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
-            else if (extractExtension(value.Base64) == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
-            else if (extractMimeType(value.Base64) == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
+        //    using (var client = new HttpClient())
+        //    {
+        //        return await client.PostAsJsonAsync("Post", pi).;
+        //    }
+        //}
 
-            pi.Base64 = value.Base64;
-            pi.Post
-        }
+        //public HttpResponseMessage CheckPicture([FromBody]CreatePictureDTO value)
+        //{
+        //    Picture pi = new Picture();
+
+        //    if (value.Base64 == null || value.Base64.Trim() == "")
+        //         err Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
+        //    else if (!IsBase64String(value.Base64))
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
+        //    else if (extractExtension(value.Base64) == null)
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
+        //    else if (extractMimeType(value.Base64) == null)
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK);
+        //    }
+        //}
+
 
 
         //// PUT api/values/5
@@ -199,10 +224,10 @@ namespace Web_API.Controllers
         //{
         //}
 
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/values/5
+        //public void Delete(int id)
+        //{
+        //}
 
         [Route("api/Posts/GetPostsForActivity")]
         [HttpGet]
@@ -221,7 +246,7 @@ namespace Web_API.Controllers
                 //transformer post en postDTO
                 PostDTO currentPost = new PostDTO
                 {
-                    Id = postInActivity.Id,
+                    //Id = postInActivity.Id,
                     Text = postInActivity.Text,
                     PicturesDTO = new List<PictureDTO>()
                 };
@@ -230,7 +255,7 @@ namespace Web_API.Controllers
                 {
                     currentPost.PicturesDTO.Add(new PictureDTO
                     {
-                        Id = picturesInPost.Id,
+                        //Id = picturesInPost.Id,
                         Base64 = picturesInPost.Base64
                     });
                 }
