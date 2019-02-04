@@ -13,19 +13,19 @@ namespace Web_API.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        //Permet de retourner toutes les photos d'un user
-        [HttpGet]
-        [Route("api/Picture")]
-        public HttpResponseMessage GetPicture()
-        {
-            var data = db.Pictures.ToList()
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Base64
-                });
-            return Request.CreateResponse(data);
-        }
+        ////Permet de retourner toutes les photos d'un user
+        //[HttpGet]
+        //[Route("api/Picture")]
+        //public HttpResponseMessage GetPicture()
+        //{
+        //    var data = db.Pictures.ToList()
+        //        .Select(p => new
+        //        {
+        //            p.Id,
+        //            p.Base64
+        //        });
+        //    return Request.CreateResponse(data);
+        //}
 
         //Méthode pour vérifier que la string reçue est bien une image en base 64
         //Doit être un multiple de 4, contenir seulement les caractères spécifiés et peut terminer par '='
@@ -78,10 +78,11 @@ namespace Web_API.Controllers
         [Route("api/Picture/CreatePicture")]
         public HttpResponseMessage CreatePicture([FromBody]CreatePictureDTO value)
         {
-            if(value == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Il n'y a pas d'image");
-
+            //Valide les informations fournies
             //Renvoie une réponse Http avec un message d'erreur si la vérification ne passe pas
+
+            if (value == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Il n'y a pas d'image");
             else if (value.Base64 == null || value.Base64.Trim() == "")
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
             else if (!IsBase64String(value.Base64))
@@ -90,7 +91,8 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
             else if (extractMimeType(value.Base64) == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
-            //Si tout passe, crée la photo à partir du body de la réponse et l'ajoute à la bd
+            
+            //Si tout passe, crée la photo à partir du body de la réponse, l'ajoute à la bd et renvoie un code 200 au client
             else
             {
                 Picture p = new Picture();
@@ -105,15 +107,15 @@ namespace Web_API.Controllers
             }
         }
 
-        //Permet de retourner les photos associées à un post
-        [HttpGet]
-        [Route("api/Picture/{id}")]
-        public HttpResponseMessage GetPicturesByPost(int id)
-        {
-            var data = db.Pictures.Where(a => a.Post.Id == id)
-                .ToList();
-            return Request.CreateResponse(data);
+        ////Permet de retourner les photos associées à un post
+        //[HttpGet]
+        //[Route("api/Picture/{id}")]
+        //public HttpResponseMessage GetPicturesByPost(int id)
+        //{
+        //    var data = db.Pictures.Where(a => a.Post.Id == id)
+        //        .ToList();
+        //    return Request.CreateResponse(data);
 
-        }
+        //}
     }
 }

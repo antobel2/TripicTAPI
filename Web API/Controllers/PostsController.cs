@@ -43,6 +43,7 @@ namespace Web_API.Controllers
                         Id = post.Id,
                         PicturesDTO = pictures,
                         Text = post.Text,
+                        Date = post.Date
                         //TODO: Changer le user et l'activity
                         //UserId = int.Parse(post.User.Id),
                         //ActivityId = post.Activity.Id
@@ -64,9 +65,11 @@ namespace Web_API.Controllers
 
             Post po = new Post();
 
-            if (value.Text != null && value.Text.Trim() != "" && value.Text.Length <= 250)
+            if (value.Text != null && value.Text.Trim() != "")
                 po.Text = value.Text;
 
+            //Set la propriété IsValid selon le nombre de photos pour valider le post après l'ajout dans la bd
+            //(le laisse à true si le post ne contient pas de photos)
             po.PicNumber = value.PictureNumber;
             if (po.PicNumber != 0)
                 po.IsValid = false;

@@ -21,6 +21,7 @@ namespace Web_API.Models
         [Required]
         public string Date { get; set; }
 
+        [Required]
         public bool IsValid { get; set; }
 
         public int PicNumber { get; set; }
@@ -51,8 +52,10 @@ namespace Web_API.Models
 
     public class CreatePostDTO
     {
+        //MaxLenght: Indique le maximum de caractères permis
         [MaxLength(250)]
         public string Text { get; set; }
+        //Range: Indique le maximum de photos permis
         [Range(minimum: 0, maximum: 25)]
         public int PictureNumber { get; set; }
         public int ActivityId { get; set; }
