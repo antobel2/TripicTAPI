@@ -73,7 +73,7 @@ namespace WebAPI.Tests
             {
                 UserId = 1,
                 ActivityId = 1,
-                PictureNumber = 4,
+                PicCount = 4,
                 Text = "TestTestTest"
             };
             
@@ -97,7 +97,7 @@ namespace WebAPI.Tests
             {
                 UserId = 1,
                 ActivityId = 1,
-                PictureNumber = 88,
+                PicCount = 88,
                 Text = "TestTestTest"
             };
 
@@ -121,7 +121,7 @@ namespace WebAPI.Tests
             {
                 UserId = 1,
                 ActivityId = 1,
-                PictureNumber = 4,
+                PicCount = 4,
                 Text = "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"
             };
 
