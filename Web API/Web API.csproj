@@ -245,6 +245,9 @@
     <Compile Include="Controllers\PicturesController.cs" />
     <Compile Include="Controllers\PostsController.cs" />
     <Compile Include="Controllers\TripsController.cs" />
+    <Compile Include="DAL\GenericRepository.cs" />
+    <Compile Include="DAL\IGenericRepository.cs" />
+    <Compile Include="DAL\UnitOfWork.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

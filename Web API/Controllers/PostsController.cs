@@ -70,15 +70,15 @@ namespace Web_API.Controllers
 
             //Set la propriété IsValid selon le nombre de photos pour valider le post après l'ajout dans la bd
             //(le laisse à true si le post ne contient pas de photos)
-            po.PicNumber = value.PictureNumber;
+            po.PicNumber = value.PicCount;
             if (po.PicNumber != 0)
                 po.IsValid = false;
             else
                 po.IsValid = true;
 
             //TODO: Changer le user et l'activity
-            //po.User = db.Users.Find(1);
-            //po.Activity = db.Activities.Find(1);
+            //po.User = db.Users.Find(value.UserId);
+            //po.Activity = db.Activities.Find(value.ActivityId);
             db.Posts.Add(po);
             db.SaveChanges();
             return Request.CreateResponse(po.Id);

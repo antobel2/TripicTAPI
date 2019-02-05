@@ -13,19 +13,19 @@ namespace Web_API.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        ////Permet de retourner toutes les photos d'un user
-        //[HttpGet]
-        //[Route("api/Picture")]
-        //public HttpResponseMessage GetPicture()
-        //{
-        //    var data = db.Pictures.ToList()
-        //        .Select(p => new
-        //        {
-        //            p.Id,
-        //            p.Base64
-        //        });
-        //    return Request.CreateResponse(data);
-        //}
+        //Permet de retourner toutes les photos d'un user
+        [HttpGet]
+        [Route("api/Picture")]
+        public HttpResponseMessage GetPicture()
+        {
+            var data = db.Pictures.ToList()
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Base64
+                });
+            return Request.CreateResponse(data);
+        }
 
         //Méthode pour vérifier que la string reçue est bien une image en base 64
         //Doit être un multiple de 4, contenir seulement les caractères spécifiés et peut terminer par '='
@@ -100,6 +100,8 @@ namespace Web_API.Controllers
                 p.Base64 = value.Base64;
                 p.Post = db.Posts.Find(value.PostId);
 
+                
+                db.SaveChanges();
                 if (p.Post.PicNumber == p.Post.Pictures.Count)
                     p.Post.IsValid = true;
                 db.SaveChanges();
@@ -107,15 +109,15 @@ namespace Web_API.Controllers
             }
         }
 
-        ////Permet de retourner les photos associées à un post
-        //[HttpGet]
-        //[Route("api/Picture/{id}")]
-        //public HttpResponseMessage GetPicturesByPost(int id)
-        //{
-        //    var data = db.Pictures.Where(a => a.Post.Id == id)
-        //        .ToList();
-        //    return Request.CreateResponse(data);
+        //Permet de retourner les photos associées à un post
+        [HttpGet]
+        [Route("api/Picture/{id}")]
+        public HttpResponseMessage GetPicturesByPost(int id)
+        {
+            var data = db.Pictures.Where(a => a.Post.Id == id)
+                .ToList();
+            return Request.CreateResponse(data);
 
-        //}
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace Web_API.Models
         public string Text { get; set; }
         //Range: Indique le maximum de photos permis
         [Range(minimum: 0, maximum: 25)]
-        public int PictureNumber { get; set; }
+        public int PicCount { get; set; }
         public int ActivityId { get; set; }
         public int UserId { get; set; }
     }
