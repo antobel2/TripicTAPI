@@ -93,7 +93,7 @@ namespace WebAPI.Tests
         [TestMethod]
         public void CreatePost_TooManyPics_KO()
         {
-            var testCreatePostDTO = new CreatePostDTO()
+            CreatePostDTO testCreatePostDTO = new CreatePostDTO()
             {
                 UserId = 1,
                 ActivityId = 1,
@@ -111,7 +111,7 @@ namespace WebAPI.Tests
             _controller.Request.Properties[HttpPropertyKeys.HttpConfigurationKey] = config;
             var response = _controller.CreatePost(testCreatePostDTO);
 
-            Assert.AreEqual(request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le champ PictureNumber doit être compris entre 0 et 25.").ReasonPhrase, response.ReasonPhrase);
+            Assert.AreEqual(request.CreateResponse(HttpStatusCode.BadRequest).StatusCode, response.StatusCode);
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace WebAPI.Tests
             _controller.Request.Properties[HttpPropertyKeys.HttpConfigurationKey] = config;
             var response = _controller.CreatePost(testCreatePostDTO);
 
-            Assert.Fail(response.ReasonPhrase);
+            Assert.AreEqual(request.CreateResponse(HttpStatusCode.BadRequest).StatusCode, response.StatusCode);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -80,7 +81,20 @@ namespace Web_API.Controllers
             //po.User = db.Users.Find(value.UserId);
             //po.Activity = db.Activities.Find(value.ActivityId);
             db.Posts.Add(po);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                foreach (var entityValidationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in entityValidationErrors.ValidationErrors)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
+                    }
+                }
+            }
             return Request.CreateResponse(po.Id);
         }
 

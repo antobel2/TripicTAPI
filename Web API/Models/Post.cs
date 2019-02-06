@@ -24,6 +24,7 @@ namespace Web_API.Models
         [Required]
         public bool IsValid { get; set; }
 
+        [Range(minimum: 0, maximum: 25)]
         public int PicNumber { get; set; }
 
         public virtual Activity Activity { get; set; }
