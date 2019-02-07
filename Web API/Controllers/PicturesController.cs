@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Web.Http;
+using Web_API.DAL;
 using Web_API.Models;
 
 namespace Web_API.Controllers
@@ -12,13 +13,14 @@ namespace Web_API.Controllers
     public class PicturesController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UnitOfWork uow = new UnitOfWork();
 
         //Permet de retourner toutes les photos d'un user
         [HttpGet]
         [Route("api/Picture")]
         public HttpResponseMessage GetPicture()
         {
-            var data = db.Pictures.ToList()
+            var data = uow.PictureRepository.Get()
                 .Select(p => new
                 {
                     p.Id,
@@ -96,15 +98,17 @@ namespace Web_API.Controllers
             else
             {
                 Picture p = new Picture();
-                db.Pictures.Add(p);
                 p.Base64 = value.Base64;
-                p.Post = db.Posts.Find(value.PostId);
+                p.Post = uow.PostRepository.GetByID(value.PostId);
+                uow.PictureRepository.Insert(p);
 
                 
-                db.SaveChanges();
                 if (p.Post.PicNumber == p.Post.Pictures.Count)
+                {
                     p.Post.IsValid = true;
-                db.SaveChanges();
+                    uow.PostRepository.Update(p.Post);
+                }
+                    
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
         }
@@ -114,7 +118,7 @@ namespace Web_API.Controllers
         [Route("api/Picture/{id}")]
         public HttpResponseMessage GetPicturesByPost(int id)
         {
-            var data = db.Pictures.Where(a => a.Post.Id == id)
+            var data = uow.PictureRepository.Get(a => a.Post.Id == id)
                 .ToList();
             return Request.CreateResponse(data);
 

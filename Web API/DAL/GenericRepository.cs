@@ -1,64 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using Web_API.Models;
 
 namespace Web_API.DAL
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> where TEntity : class
     {
-        protected DbContext context;
-        protected DbSet<TEntity> dbSet;
+        internal ApplicationDbContext context;
+        internal DbSet<TEntity> dbSet;
 
-        public GenericRepository(DbContext context)
+        public GenericRepository(ApplicationDbContext context)
         {
             this.context = context;
-            dbSet = context.Set<TEntity>();
+            this.dbSet = context.Set<TEntity>();
         }
 
-        public void Delete(object id)
-        {
-            TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
-        }
-
-        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
+        public virtual IEnumerable<TEntity> Get(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "")
         {
             IQueryable<TEntity> query = dbSet;
 
             if (filter != null)
             {
-                //filter est une lambda expression
                 query = query.Where(filter);
             }
-            //faire les Include
-            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
 
             if (orderBy != null)
             {
-                query = orderBy(query);
-
+                return orderBy(query).ToList();
             }
-            return query;
+            else
+            {
+                return query.ToList();
+            }
         }
 
-        public TEntity GetByID(object id)
+        public virtual TEntity GetByID(object id)
         {
             return dbSet.Find(id);
         }
 
-        public void Insert(TEntity entity)
+        public virtual void Insert(TEntity entity)
         {
             dbSet.Add(entity);
+            context.SaveChanges();
         }
 
-        public void Update(TEntity entityToUpdate)
+        public virtual void Delete(object id)
         {
-            dbSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            TEntity entityToDelete = dbSet.Find(id);
+            Delete(entityToDelete);
+            context.SaveChanges();
         }
 
         public virtual void Delete(TEntity entityToDelete)
@@ -68,6 +71,14 @@ namespace Web_API.DAL
                 dbSet.Attach(entityToDelete);
             }
             dbSet.Remove(entityToDelete);
+            context.SaveChanges();
+        }
+
+        public virtual void Update(TEntity entityToUpdate)
+        {
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+            context.SaveChanges();
         }
     }
 }

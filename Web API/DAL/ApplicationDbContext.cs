@@ -21,10 +21,10 @@ namespace Web_API.Models
             return new ApplicationDbContext();
         }
 
-        public DbSet<Trip> Trips { get; set; }
-        public DbSet<Activity> Activities { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Picture> Pictures { get; set; }
+        public virtual DbSet<Trip> Trips { get; set; }
+        public virtual DbSet<Activity> Activities { get; set; }
+        public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Picture> Pictures { get; set; }
     }
 
     public class Init : DropCreateDatabaseIfModelChanges<ApplicationDbContext>

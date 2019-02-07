@@ -7,22 +7,51 @@ using Web_API.Models;
 
 namespace Web_API.DAL
 {
-    public class UnitOfWork
+    public class UnitOfWork : IDisposable
     {
-        private Dictionary<Type, object> repoDict;
-        private DbContext context;
+        private ApplicationDbContext context = new ApplicationDbContext();
+        private GenericRepository<Post> postRepo;
+        private GenericRepository<Activity> activityRepo;
+        private GenericRepository<Picture> pictureRepo;
 
         public UnitOfWork()
         {
-            repoDict = new Dictionary<Type, object>();
-            context = ApplicationDbContext.Create();
+            
         }
 
-        public IGenericRepository<T> Repo<T>() where T : class
+        public GenericRepository<Post> PostRepository
         {
-            if (!repoDict.ContainsKey(typeof(T)))
-                repoDict.Add(typeof(T), new GenericRepository<T>(context));
-            return repoDict[typeof(T)] as IGenericRepository<T>;
+            get
+            {
+                if (postRepo == null)
+                {
+                    postRepo = new GenericRepository<Post>(context);
+                }
+                return postRepo;
+            }
+        }
+
+        public GenericRepository<Activity> ActivityRepository
+        {
+            get
+            {
+                if (activityRepo == null)
+                {
+                    activityRepo = new GenericRepository<Activity>(context);
+                }
+                return activityRepo;
+            }
+        }
+        public GenericRepository<Picture> PictureRepository
+        {
+            get
+            {
+                if (pictureRepo == null)
+                {
+                    pictureRepo = new GenericRepository<Picture>(context);
+                }
+                return pictureRepo;
+            }
         }
 
         public void Save()
@@ -30,9 +59,25 @@ namespace Web_API.DAL
             context.SaveChanges();
         }
 
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    context.Dispose();
+                }
+            }
+            disposed = true;
+        }
+
         public void Dispose()
         {
-            context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Web_API.DAL;
+using Web_API.DAL.Services;
 using Web_API.Models;
 
 namespace Web_API.Controllers
@@ -18,8 +20,10 @@ namespace Web_API.Controllers
     // [Authorize]
     public class PostsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-        
+        //private ApplicationDbContext db = new ApplicationDbContext();
+        private IServicePosts servicePost = new ServicePosts();
+        private UnitOfWork uow = new UnitOfWork();
+
         // GET api/values
         //Retourne la liste des posts de l'utilisateur
         [HttpGet]
@@ -27,9 +31,9 @@ namespace Web_API.Controllers
         public IEnumerable<PostDTO> GetPosts()
         {
             List<PostDTO> postsDTO = new List<PostDTO>();
-            foreach (Post post in db.Posts.ToList())
+            foreach (Post post in uow.PostRepository.Get().ToList())
             {
-                if(post.IsValid == true)
+                if (post.IsValid == true)
                 {
                     var pictures = new List<PictureDTO>();
                     foreach (Picture picture in post.Pictures)
@@ -39,16 +43,7 @@ namespace Web_API.Controllers
                         pi.Id = picture.Id;
                         pictures.Add(pi);
                     }
-                    postsDTO.Add(new PostDTO()
-                    {
-                        Id = post.Id,
-                        PicturesDTO = pictures,
-                        Text = post.Text,
-                        Date = post.Date
-                        //TODO: Changer le user et l'activity
-                        //UserId = int.Parse(post.User.Id),
-                        //ActivityId = post.Activity.Id
-                    });
+                    postsDTO.Add(servicePost.ToPostDTO(post));
                 }
                 
             }
@@ -80,10 +75,10 @@ namespace Web_API.Controllers
             //TODO: Changer le user et l'activity
             //po.User = db.Users.Find(value.UserId);
             //po.Activity = db.Activities.Find(value.ActivityId);
-            db.Posts.Add(po);
+            
             try
             {
-                db.SaveChanges();
+                servicePost.CreatePost(po);
             }
             catch (DbEntityValidationException ex)
             {
@@ -113,32 +108,19 @@ namespace Web_API.Controllers
         [ResponseType(typeof(List<PostDTO>))]
         public HttpResponseMessage GetPostsForActivity(int id)
         {
-            Activity activity = db.Activities.Find(id);
+            Activity activity = uow.ActivityRepository.GetByID(id);
             if (activity == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The activity was not found");
             }
 
+            List<Post> postsInActivity = servicePost.GetPostsForActivity(activity);
+
+            //Transformer les posts en PostDTO
             List<PostDTO> results = new List<PostDTO>();
-            foreach (Post postInActivity in activity.Posts)
+            foreach (Post post in postsInActivity)
             {
-                //transformer post en postDTO
-                PostDTO currentPost = new PostDTO
-                {
-                    Id = postInActivity.Id,
-                    Text = postInActivity.Text,
-                    PicturesDTO = new List<PictureDTO>()
-                };
-                //ajouter toutes les photos du post à la liste de photo du dto
-                foreach (Picture picturesInPost in postInActivity.Pictures)
-                {
-                    currentPost.PicturesDTO.Add(new PictureDTO
-                    {
-                        Id = picturesInPost.Id,
-                        Base64 = picturesInPost.Base64
-                    });
-                }
-                results.Add(currentPost);
+                results.Add(servicePost.ToPostDTO(post));
             }
 
             return Request.CreateResponse(results);
