@@ -25,7 +25,7 @@ namespace Web_API.Models
 
     public class PictureDTO
     {
-        public string Base64 { get; set; }
+        public byte[] Content { get; set; }
         public int Id { get; set; }
     }
 

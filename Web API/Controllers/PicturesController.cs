@@ -15,32 +15,32 @@ namespace Web_API.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private UnitOfWork uow = new UnitOfWork();
 
-        //Permet de retourner toutes les photos d'un user
-        [HttpGet]
-        [Route("api/Picture")]
-        public HttpResponseMessage GetPicture()
-        {
-            var data = uow.PictureRepository.Get()
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Base64
-                });
-            return Request.CreateResponse(data);
-        }
+        ////Permet de retourner toutes les photos d'un user
+        //[HttpGet]
+        //[Route("api/Picture")]
+        //public HttpResponseMessage GetPicture()
+        //{
+        //    var data = uow.PictureRepository.Get()
+        //        .Select(p => new
+        //        {
+        //            p.Id,
+        //            p.Base64
+        //        });
+        //    return Request.CreateResponse(data);
+        //}
 
-        //Permet de retourner toutes les photos d'un user
+        //Permet de retourner la photo demandée par son Id
         [HttpGet]
         [Route("api/Picture/GetPictureFromId/{id}")]
         public HttpResponseMessage GetPictureFromId(int id)
         {
-            var data = uow.PictureRepository.Get()
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Base64
-                });
-            return Request.CreateResponse(data);
+            var data = uow.PictureRepository.GetByID(id);
+            PictureDTO p = new PictureDTO
+            {
+                Id = data.Id,
+                Content = Convert.FromBase64String(GetBase64String(data.Base64))
+            };
+            return Request.CreateResponse(p);
         }
 
         //Méthode pour vérifier que la string reçue est bien une image en base 64
@@ -53,6 +53,13 @@ namespace Web_API.Controllers
                 return true;
             else
                 return false;
+        }
+
+        public static string GetBase64String(string s)
+        {
+            int base64StringStart = s.IndexOf(',');
+            string finalS = s.Substring(base64StringStart + 1).Trim();
+                return finalS;
         }
 
         //Obtient le type de fichier du fichier et vérifie qu'il s'agit des bons types de fichiers
