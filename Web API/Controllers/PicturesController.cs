@@ -29,6 +29,20 @@ namespace Web_API.Controllers
             return Request.CreateResponse(data);
         }
 
+        //Permet de retourner toutes les photos d'un user
+        [HttpGet]
+        [Route("api/Picture/GetPictureFromId/{id}")]
+        public HttpResponseMessage GetPictureFromId(int id)
+        {
+            var data = uow.PictureRepository.Get()
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Base64
+                });
+            return Request.CreateResponse(data);
+        }
+
         //Méthode pour vérifier que la string reçue est bien une image en base 64
         //Doit être un multiple de 4, contenir seulement les caractères spécifiés et peut terminer par '='
         public static bool IsBase64String(string s)

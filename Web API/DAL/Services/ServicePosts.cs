@@ -8,11 +8,10 @@ namespace Web_API.DAL.Services
 {
     public class ServicePosts : IServicePosts
     {
-        private UnitOfWork uow = new UnitOfWork();
-
-        public ServicePosts()
+        UnitOfWork uow;
+        public ServicePosts(UnitOfWork uow)
         {
-            
+            this.uow = uow;
         }
 
         public void CreatePost(Post post)
@@ -48,21 +47,12 @@ namespace Web_API.DAL.Services
 
         public PostDTO ToPostDTO(Post post)
         {
-            PostDTO result = new PostDTO
-            {
-                Id = post.Id,
-                Text = post.Text,
-                PicturesDTO = new List<PictureDTO>()
-            };
-            foreach (Picture picturesInPost in post.Pictures)
-            {
-                result.PicturesDTO.Add(new PictureDTO
-                {
-                    Id = picturesInPost.Id,
-                    Base64 = picturesInPost.Base64
-                });
-            }
-            return result;
+            var newPostDTO = new PostDTO();
+            newPostDTO.Text = post.Text;
+            newPostDTO.Id = post.Id;
+            newPostDTO.Date = post.Date;
+            newPostDTO.IDTable = post.Pictures.Select(x => x.Id).ToList();
+            return newPostDTO;
         }
 
         public void UpdatePost(Post post)

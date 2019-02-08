@@ -21,8 +21,15 @@ namespace Web_API.Controllers
     public class PostsController : ApiController
     {
         //private ApplicationDbContext db = new ApplicationDbContext();
-        private IServicePosts servicePost = new ServicePosts();
         private UnitOfWork uow = new UnitOfWork();
+        private IServicePosts servicePost;
+
+        public PostsController()
+        {
+            this.servicePost = new ServicePosts(uow);
+        }
+
+
 
         // GET api/values
         //Retourne la liste des posts de l'utilisateur
@@ -35,14 +42,6 @@ namespace Web_API.Controllers
             {
                 if (post.IsValid == true)
                 {
-                    var pictures = new List<PictureDTO>();
-                    foreach (Picture picture in post.Pictures)
-                    {
-                        PictureDTO pi = new PictureDTO();
-                        pi.Base64 = picture.Base64;
-                        pi.Id = picture.Id;
-                        pictures.Add(pi);
-                    }
                     postsDTO.Add(servicePost.ToPostDTO(post));
                 }
                 
@@ -74,7 +73,7 @@ namespace Web_API.Controllers
 
             //TODO: Changer le user et l'activity
             //po.User = db.Users.Find(value.UserId);
-            //po.Activity = db.Activities.Find(value.ActivityId);
+            po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
             
             try
             {
@@ -103,7 +102,7 @@ namespace Web_API.Controllers
         //{
         //}
 
-        [Route("api/Posts/GetPostsForActivity")]
+        [Route("api/Posts/GetPostsForActivity/{id}")]
         [HttpGet]
         [ResponseType(typeof(List<PostDTO>))]
         public HttpResponseMessage GetPostsForActivity(int id)

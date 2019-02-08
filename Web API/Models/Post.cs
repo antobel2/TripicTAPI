@@ -46,7 +46,7 @@ namespace Web_API.Models
         //[Required]
         //public int UserId { get; set; }
         public int Id { get; set; }
-        public List<PictureDTO> PicturesDTO { get; set; }
+        public IEnumerable<int> IDTable { get; set; }
         public string Text { get; set; }
         public string Date { get; set; }
     }
