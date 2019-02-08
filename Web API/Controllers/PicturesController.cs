@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Web.Http;
 using Web_API.DAL;
@@ -34,13 +37,20 @@ namespace Web_API.Controllers
         [Route("api/Picture/GetPictureFromId/{id}")]
         public HttpResponseMessage GetPictureFromId(int id)
         {
+
             var data = uow.PictureRepository.GetByID(id);
-            PictureDTO p = new PictureDTO
+            byte[] bytes = Convert.FromBase64String(GetBase64String(data.Base64));
+            HttpResponseMessage result;
+            Image image;
+            using (MemoryStream ms = new MemoryStream(bytes))
             {
-                Id = data.Id,
-                Content = Convert.FromBase64String(GetBase64String(data.Base64))
-            };
-            return Request.CreateResponse(p);
+                image = Image.FromStream(ms);
+
+                result = new HttpResponseMessage(HttpStatusCode.OK);
+                result.Content = new ByteArrayContent(ms.ToArray());
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            }
+            return result;
         }
 
         //Méthode pour vérifier que la string reçue est bien une image en base 64

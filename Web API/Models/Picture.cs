@@ -18,11 +18,6 @@ namespace Web_API.Models
         public virtual Post Post { get; set; }
     }
 
-    public class PictureWithDatabaseStorageStrategy : Picture
-    {
-        public byte[] Content { get; set; }
-    }
-
     public class PictureDTO
     {
         public byte[] Content { get; set; }

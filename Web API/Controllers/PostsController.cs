@@ -73,7 +73,7 @@ namespace Web_API.Controllers
 
             //TODO: Changer le user et l'activity
             //po.User = db.Users.Find(value.UserId);
-            po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
+            //po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
             
             try
             {
