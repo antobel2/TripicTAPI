@@ -8,12 +8,14 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Web_API.DAL;
 using Web_API.Models;
 
 namespace Web_API.Controllers
 {
     public class ActivitiesController : ApiController
     {
+        private UnitOfWork uow = new UnitOfWork();
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Activities
@@ -112,19 +114,16 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
+            Trip trip = uow.TripRepository.GetByID(id);
             List<ActivityDTO> activityDTOs = new List<ActivityDTO>();
-
-            foreach (Activity a in db.Activities)
+            foreach (Activity a in trip.Activities)
             {
-                if (a.Trip.Id == id)
+                ActivityDTO act = new ActivityDTO
                 {
-                    ActivityDTO activityDTO = new ActivityDTO()
-                    {
-                        Id = a.Id,
-                        Name = a.Name
-                    };
-                    activityDTOs.Add(activityDTO);
-                }
+                    Id = a.Id,
+                    Name = a.Name
+                };
+                activityDTOs.Add(act);
             }
             return Request.CreateResponse(activityDTOs);
         }

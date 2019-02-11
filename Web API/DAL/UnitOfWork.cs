@@ -13,6 +13,7 @@ namespace Web_API.DAL
         private GenericRepository<Post> postRepo;
         private GenericRepository<Activity> activityRepo;
         private GenericRepository<Picture> pictureRepo;
+        private GenericRepository<Trip> tripRepo;
 
         public UnitOfWork()
         {
@@ -51,6 +52,18 @@ namespace Web_API.DAL
                     pictureRepo = new GenericRepository<Picture>(context);
                 }
                 return pictureRepo;
+            }
+        }
+
+        public GenericRepository<Trip> TripRepository
+        {
+            get
+            {
+                if (tripRepo == null)
+                {
+                    tripRepo = new GenericRepository<Trip>(context);
+                }
+                return tripRepo;
             }
         }
 
