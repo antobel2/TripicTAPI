@@ -60,6 +60,31 @@ namespace Web_API.Controllers
             return Ok();
         }
 
+        [Route("api/Trip/getTripsForUser")]
+        [HttpGet]
+        [ResponseType(typeof(List<TripDTO>))]
+        public HttpResponseMessage GetTripsForUser()
+        {
+            if(!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            List<TripDTO> trips = new List<TripDTO>();
+
+            foreach (Trip t in db.Trips)
+            {
+                TripDTO tripDTO = new TripDTO()
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                };
+                trips.Add(tripDTO);
+            }
+
+            return Request.CreateResponse(trips);
+        }
+
         // PUT: api/Trips/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTrip(int id, Trip trip)

@@ -73,7 +73,7 @@ namespace Web_API.Controllers
         // POST: api/Activities
         [HttpPost]
         [Route("api/Activity/CreateActivity")]
-        public IHttpActionResult PostActivity([FromBody]CreateActivityDTO value)
+        public IHttpActionResult CreateActivity([FromBody]CreateActivityDTO value)
         {
             if (!ModelState.IsValid)
             {
@@ -99,6 +99,34 @@ namespace Web_API.Controllers
             db.SaveChanges();
 
             return Ok();
+        }
+
+
+        [Route("api/Activity/getActivitiesForTrip")]
+        [HttpGet]
+        [ResponseType(typeof(List<TripDTO>))]
+        public HttpResponseMessage GetActivitiesForTrip(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            List<ActivityDTO> activityDTOs = new List<ActivityDTO>();
+
+            foreach (Activity a in db.Activities)
+            {
+                if (a.Trip.Id == id)
+                {
+                    ActivityDTO activityDTO = new ActivityDTO()
+                    {
+                        Id = a.Id,
+                        Name = a.Name
+                    };
+                    activityDTOs.Add(activityDTO);
+                }
+            }
+            return Request.CreateResponse(activityDTOs);
         }
 
         // DELETE: api/Activities/5
