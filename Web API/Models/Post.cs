@@ -19,7 +19,7 @@ namespace Web_API.Models
         public string Text { get; set; }
 
         [Required]
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         public bool IsValid { get; set; }
@@ -35,7 +35,7 @@ namespace Web_API.Models
 
         public Post()
         {
-            Date = DateTime.Now.ToString("dd/MM/yy H:mm");
+            Date = DateTime.Now;
         }
     }
 
@@ -49,6 +49,11 @@ namespace Web_API.Models
         public IEnumerable<int> IDTable { get; set; }
         public string Text { get; set; }
         public string Date { get; set; }
+
+        public PostDTO(Post p)
+        {
+            Date = p.Date.ToString("dd/MM/yy H:mm");
+        }
     }
 
     public class CreatePostDTO

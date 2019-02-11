@@ -73,7 +73,7 @@ namespace Web_API.Controllers
 
             //TODO: Changer le user et l'activity
             //po.User = db.Users.Find(value.UserId);
-            //po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
+            po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
             
             try
             {
@@ -113,7 +113,7 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The activity was not found");
             }
 
-            List<Post> postsInActivity = servicePost.GetPostsForActivity(activity);
+            List<Post> postsInActivity = servicePost.GetPostsForActivity(activity).OrderByDescending(x => x.Date).ToList();
 
             //Transformer les posts en PostDTO
             List<PostDTO> results = new List<PostDTO>();
