@@ -35,6 +35,6 @@ namespace Web_API.Models
     public class CreateActivityDTO
     {
         public string Name { get; set; }
-        public int VoyageId { get; set; }
+        public int TripId { get; set; }
     }
 }

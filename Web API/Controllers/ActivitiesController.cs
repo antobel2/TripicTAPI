@@ -75,32 +75,36 @@ namespace Web_API.Controllers
         // POST: api/Activities
         [HttpPost]
         [Route("api/Activity/CreateActivity")]
-        public IHttpActionResult CreateActivity([FromBody]CreateActivityDTO value)
+        public HttpResponseMessage CreateActivity([FromBody]CreateActivityDTO value)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
 
             Activity activity = new Activity(value.Name);
 
-            var activities = db.Activities.ToArray();
+            var activities = uow.ActivityRepository.dbSet.ToArray();
             foreach (Activity act in activities)
             {
                 if (act.Name == value.Name)
                 {
-                    activity.Name = value.Name + " (" + DateTime.Now + ") ";
+                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, "Une activité avec ce nom existe déjà dans le voyage");
                 }
             }
 
-            activity.Trip = db.Trips.Find(value.VoyageId);
+            activity.Trip = uow.TripRepository.dbSet.Find(value.TripId);
+            // activity.Trip = db.Trips.Find(value.TripId);
             activity.Posts = new List<Post>();
 
-            db.Activities.Add(activity);
-            db.SaveChanges();
+            //uow.ActivityRepository.dbSet.Add(activity);
+            //uow.ActivityRepository.context.SaveChanges();
+            //db.Activities.Add(activity);
+            //db.SaveChanges();
+            uow.ActivityRepository.Insert(activity);
 
-            return Ok();
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
 
