@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
@@ -23,10 +26,22 @@ namespace Web_API.Controllers
         //private ApplicationDbContext db = new ApplicationDbContext();
         private UnitOfWork uow = new UnitOfWork();
         private IServicePosts servicePost;
+        private ApplicationUserManager userManager;
 
         public PostsController()
         {
             this.servicePost = new ServicePosts(uow);
+        }
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                userManager = value;
+            }
         }
 
 
@@ -37,24 +52,30 @@ namespace Web_API.Controllers
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+
             List<PostDTO> postsDTO = new List<PostDTO>();
-            foreach (Post post in uow.PostRepository.Get().ToList())
+            foreach (Post post in uow.PostRepository.Get().ToList().Where(x => x.User.Id == currentUser.Id))
             {
                 if (post.IsValid == true)
                 {
                     postsDTO.Add(servicePost.ToPostDTO(post));
                 }
-                
+
             }
             return postsDTO;
         }
-        
+
         // POST api/values
         //Crée un post, y ajoute le texte s'il y en a, renvoie une réponse et le id si le post est bien créé
         [HttpPost]
         [Route("api/Post/CreatePost")]
         public HttpResponseMessage CreatePost([FromBody]CreatePostDTO value)
         {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+
             if (!ModelState.IsValid)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
@@ -72,9 +93,9 @@ namespace Web_API.Controllers
                 po.IsValid = true;
 
             //TODO: Changer le user et l'activity
-            //po.User = db.Users.Find(value.UserId);
+            po.User = currentUser;
             po.Activity = uow.ActivityRepository.GetByID(value.ActivityId);
-            
+
             try
             {
                 servicePost.CreatePost(po);
@@ -107,6 +128,10 @@ namespace Web_API.Controllers
         [ResponseType(typeof(List<PostDTO>))]
         public HttpResponseMessage GetPostsForActivity(int id)
         {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+
+
             Activity activity = uow.ActivityRepository.GetByID(id);
             if (activity == null)
             {
