@@ -11,6 +11,7 @@ namespace Web_API.Models
     // Vous pouvez ajouter des données de profil pour l'utilisateur en ajoutant d'autres propriétés à votre classe ApplicationUser. Pour en savoir plus, consultez https://go.microsoft.com/fwlink/?LinkID=317594.
     public class ApplicationUser : IdentityUser
     {
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {
             // Notez que authenticationType doit correspondre à l'instance définie dans CookieAuthenticationOptions.AuthenticationType
@@ -19,7 +20,18 @@ namespace Web_API.Models
             return userIdentity;
         }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public virtual List<Trip> Trips { get; set; }
         public virtual List<Post> Posts { get; set; }
     }
+
+    public class SignedInUserDTO
+    {
+        public string UUID { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+
 }

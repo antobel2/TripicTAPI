@@ -35,19 +35,24 @@ namespace Web_API.Models
     public class RegisterBindingModel
     {
         [Required]
-        [Display(Name = "E-mail")]
-        public string Email { get; set; }
+        [StringLength(35, ErrorMessage = "La chaîne {0} doit comporter au moins {5} caractères.", MinimumLength = 5)]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "La chaîne {0} doit comporter au moins {2} caractères.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
+        [StringLength(50, ErrorMessage = "La chaîne {0} doit comporter au moins {1} caractères.", MinimumLength = 1)]
+        [Display(Name = "FirstName")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [StringLength(50, ErrorMessage = "La chaîne {0} doit comporter au moins {1} caractères.", MinimumLength = 1)]
+        [Display(Name = "LastName")]
+        public string LastName { get; set; }
+
+        [Required]
+        [StringLength(35, ErrorMessage = "La chaîne {0} doit comporter au moins {8} caractères.", MinimumLength = 8)]
         [Display(Name = "Mot de passe")]
         public string Password { get; set; }
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirmer le mot de passe ")]
-        [Compare("Password", ErrorMessage = "Le mot de passe et le mot de passe de confirmation ne correspondent pas.")]
-        public string ConfirmPassword { get; set; }
     }
 
     public class RegisterExternalBindingModel

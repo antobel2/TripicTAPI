@@ -28,6 +28,7 @@ namespace Web_API.Controllers
 
         public AccountController()
         {
+            
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -328,7 +329,13 @@ namespace Web_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() {
+                UserName = model.UserName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = "plzlet"+model.UserName+"live@misantrophie.com",
+                EmailConfirmed = true
+            };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -337,7 +344,13 @@ namespace Web_API.Controllers
                 return GetErrorResult(result);
             }
 
-            return Ok();
+            return Ok(new SignedInUserDTO
+            {
+                UUID = UserManager.FindByName(user.UserName).Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            });
         }
 
         // POST api/Account/RegisterExternal
