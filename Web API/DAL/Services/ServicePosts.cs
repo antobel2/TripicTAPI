@@ -47,10 +47,9 @@ namespace Web_API.DAL.Services
 
         public PostDTO ToPostDTO(Post post)
         {
-            var newPostDTO = new PostDTO();
+            var newPostDTO = new PostDTO(post);
             newPostDTO.Text = post.Text;
             newPostDTO.Id = post.Id;
-            newPostDTO.Date = post.Date;
             newPostDTO.IDTable = post.Pictures.Select(x => x.Id).ToList();
             return newPostDTO;
         }

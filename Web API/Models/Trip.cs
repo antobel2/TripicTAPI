@@ -25,4 +25,15 @@ namespace Web_API.Models
             Name = name;
         }
     }
+
+    public class TripDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class CreateTripDTO
+    {
+        public string Name { get; set; }
+    }
 }

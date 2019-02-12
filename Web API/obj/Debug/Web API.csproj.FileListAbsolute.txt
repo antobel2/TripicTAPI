@@ -734,6 +734,7 @@ C:\Users\1028406\Desktop\Repo\webapi\Web API\bin\System.Web.Http.Cors.xml
 C:\Users\1507779\Desktop\webapi\Web API\bin\System.Web.Cors.dll
 C:\Users\1507779\Desktop\webapi\Web API\bin\System.Web.Http.Cors.dll
 C:\Users\1507779\Desktop\webapi\Web API\bin\System.Web.Http.Cors.xml
+<<<<<<< HEAD
 C:\Users\1467772\Desktop\webapi\Web API\bin\ApplicationInsights.config
 C:\Users\1467772\Desktop\webapi\Web API\bin\Web API.dll.config
 C:\Users\1467772\Desktop\webapi\Web API\bin\Web API.dll
@@ -883,3 +884,8 @@ C:\Users\1467772\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CoreCompileInpu
 C:\Users\1467772\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CopyComplete
 C:\Users\1467772\Desktop\webapi\Web API\obj\Debug\Web API.dll
 C:\Users\1467772\Desktop\webapi\Web API\obj\Debug\Web API.pdb
+=======
+C:\Users\1447500\Desktop\webapi\Web API\bin\System.Web.Cors.dll
+C:\Users\1447500\Desktop\webapi\Web API\bin\System.Web.Http.Cors.dll
+C:\Users\1447500\Desktop\webapi\Web API\bin\System.Web.Http.Cors.xml
+>>>>>>> 7327288adab6300bf4f3dc646f0cda675baf8456
