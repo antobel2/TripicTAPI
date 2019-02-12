@@ -8,12 +8,14 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Web_API.DAL;
 using Web_API.Models;
 
 namespace Web_API.Controllers
 {
     public class TripsController : ApiController
     {
+        private UnitOfWork uow = new UnitOfWork();
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Trips
@@ -38,26 +40,32 @@ namespace Web_API.Controllers
         // Post: api/CreateTrip
         [Route("api/Trip/CreateTrip")]
         [HttpPost]
-        public IHttpActionResult CreateTrip(Trip trip)
+        public HttpResponseMessage CreateTrip([FromBody]CreateTripDTO value)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Error in the model of request api/Trip/CreateTrip");
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            var tripResults = db.Trips.ToList();
+            var tripResults = uow.TripRepository.dbSet.ToArray();
+            value.Name = value.Name.Trim();
+            //var tripResults = db.Trips.ToList();
             foreach (Trip i in tripResults)
             {
-                if (i.Name == trip.Name)
+                if (i.Name == value.Name)
                 {
-                    trip.Name = trip.Name + " (" + DateTime.Now + ")";
+                    value.Name += " (" + DateTime.Now + ")";
                 }
             }
 
-            db.Trips.Add(trip);
-            db.SaveChanges();
+            Trip trip = new Trip(value.Name);
 
-            return Ok();
+            uow.TripRepository.Insert(trip);
+
+            //db.Trips.Add(trip);
+            //db.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         [Route("api/Trip/getTripsForUser")]
@@ -65,7 +73,7 @@ namespace Web_API.Controllers
         [ResponseType(typeof(List<TripDTO>))]
         public HttpResponseMessage GetTripsForUser()
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }

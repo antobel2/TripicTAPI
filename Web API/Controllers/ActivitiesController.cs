@@ -83,7 +83,7 @@ namespace Web_API.Controllers
             }
 
 
-            Activity activity = new Activity(value.Name);
+            Activity activity = new Activity(value.Name.Trim());
 
             var activities = uow.ActivityRepository.dbSet.ToArray();
             foreach (Activity act in activities)
@@ -108,7 +108,7 @@ namespace Web_API.Controllers
         }
 
 
-        [Route("api/Activity/getActivitiesForTrip")]
+        [Route("api/Activity/getActivitiesForTrip/{id}")]
         [HttpGet]
         [ResponseType(typeof(List<TripDTO>))]
         public HttpResponseMessage GetActivitiesForTrip(int id)
