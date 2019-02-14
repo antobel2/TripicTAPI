@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -16,61 +17,52 @@ namespace Web_API.Controllers
     public class ActivitiesController : ApiController
     {
         private UnitOfWork uow = new UnitOfWork();
-        private ApplicationDbContext db = new ApplicationDbContext();
+        // private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Activities
-        public IQueryable<Activity> GetActivities()
+        [Route("api/Activities/GetActivitiesForTrip/{id}")]
+        [Authorize]
+        public HttpResponseMessage GetActivitiesForTrip(int id)
         {
-            return db.Activities;
+            //Trouver le voyage
+            Trip trip = uow.TripRepository.GetByID(id);
+            if (trip == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du voyage n'a retourné aucun résultats");
+            }
+
+            //Verifier que l'utilisateur à les droits d'accès au voyage
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == id) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur n'à pas les droits d'accès sur le voyage");
+            }
+            
+            List<ActivityDTO> results = new List<ActivityDTO>();
+            foreach (Activity activity in trip.Activities)
+            {
+                ActivityDTO res = new ActivityDTO();
+                res = res.toDto(activity);
+                results.Add(res);
+            }
+            return Request.CreateResponse(results);
         }
 
-        // GET: api/Activities/5
-        [ResponseType(typeof(Activity))]
-        public IHttpActionResult GetActivity(int id)
+        [Route("api/Activities/GetActivityById/{id}")]
+        public HttpResponseMessage GetActivityById(int id)
         {
-            Activity activity = db.Activities.Find(id);
+            //Trouver l'activité
+            Activity activity = uow.ActivityRepository.GetByID(id);
             if (activity == null)
             {
-                return NotFound();
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id de l'activité n'a retourné aucun resultats");
             }
-
-            return Ok(activity);
+            
+            return Request.CreateResponse(activity);
         }
 
-        // PUT: api/Activities/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutActivity(int id, Activity activity)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != activity.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(activity).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ActivityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+        
 
         // POST: api/Activities
         [HttpPost]

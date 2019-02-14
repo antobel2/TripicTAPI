@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -16,36 +19,65 @@ namespace Web_API.Controllers
     public class TripsController : ApiController
     {
         private UnitOfWork uow = new UnitOfWork();
-        private ApplicationDbContext db = new ApplicationDbContext();
+        //private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Trips
-        public IQueryable<Trip> GetTrips()
+        [Route("api/Trips/GetTripsForUser")]
+        [Authorize]
+        public List<TripDTO> GetTripsForUser()
         {
-            return db.Trips;
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            List<TripDTO> results = new List<TripDTO>();
+            foreach (Trip trip in currentUser.Trips)
+            {
+                TripDTO toDto = new TripDTO();
+                toDto = toDto.toTripDTO(trip);
+                results.Add(toDto);
+            }
+
+            return results;
         }
 
         // GET: api/Trips/5
-        [ResponseType(typeof(Trip))]
-        public IHttpActionResult GetTrip(int id)
+        [Authorize]
+        [Route("api/Trips/GetTripById/{id}")]
+        public HttpResponseMessage GetTrip(int id)
         {
-            Trip trip = db.Trips.Find(id);
+            //Trouver le voyage
+            Trip trip = uow.TripRepository.GetByID(id);
             if (trip == null)
             {
-                return NotFound();
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du voyage n'a retourné aucun resultats");
             }
 
-            return Ok(trip);
+            //Vérifier que l'utilisateur a les droits sur le voyage
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == trip.Id) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur actuel n'a pas les droits d'accès au voyage demandé");
+            }
+
+            TripDTO result = new TripDTO();
+            result = result.toTripDTO(trip);
+
+            return Request.CreateResponse(result);
         }
 
         // Post: api/CreateTrip
-        [Route("api/Trip/CreateTrip")]
+        [Route("api/Trips/CreateTrip")]
         [HttpPost]
+        [Authorize]
         public HttpResponseMessage CreateTrip([FromBody]CreateTripDTO value)
         {
             if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
+
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
 
             var tripResults = uow.TripRepository.dbSet.ToArray();
             value.Name = value.Name.Trim();
@@ -61,116 +93,51 @@ namespace Web_API.Controllers
             Trip trip = new Trip(value.Name);
 
             uow.TripRepository.Insert(trip);
-
-            //db.Trips.Add(trip);
-            //db.SaveChanges();
+            //lié le voyage crée a l'utilisateur
+            currentUser.Trips.Add(trip);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [Route("api/Trip/getTripsForUser")]
-        [HttpGet]
-        [ResponseType(typeof(List<TripDTO>))]
-        public HttpResponseMessage GetTripsForUser()
+        [Route("api/Trips/InviteUserToTrip")]
+        [Authorize]
+        [HttpPost]
+        public HttpResponseMessage InviteUserToTrip([FromBody]InviteUserToTripDTO value)
         {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
-
-            List<TripDTO> trips = new List<TripDTO>();
-
-            foreach (Trip t in db.Trips)
-            {
-                TripDTO tripDTO = new TripDTO()
-                {
-                    Id = t.Id,
-                    Name = t.Name
-                };
-                trips.Add(tripDTO);
-            }
-
-            return Request.CreateResponse(trips);
-        }
-
-        // PUT: api/Trips/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutTrip(int id, Trip trip)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != trip.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(trip).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TripExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Trips
-        [ResponseType(typeof(Trip))]
-        public IHttpActionResult PostTrip(Trip trip)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Trips.Add(trip);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = trip.Id }, trip);
-        }
-
-        // DELETE: api/Trips/5
-        [ResponseType(typeof(Trip))]
-        public IHttpActionResult DeleteTrip(int id)
-        {
-            Trip trip = db.Trips.Find(id);
+            //Trouver le voyage
+            Trip trip = uow.TripRepository.GetByID(value.TripId);
             if (trip == null)
             {
-                return NotFound();
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du voyage n'a retourné aucun résultats");
             }
 
-            db.Trips.Remove(trip);
-            db.SaveChanges();
-
-            return Ok(trip);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            //Vérifier que l'utilisateur a les droits sur le voyage
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == value.TripId) == null)
             {
-                db.Dispose();
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur actuel n'a pas les droits d'accès au voyage demandé");
             }
-            base.Dispose(disposing);
-        }
 
-        private bool TripExists(int id)
-        {
-            return db.Trips.Count(e => e.Id == id) > 0;
+            //Ajouter un utilisateur a un voyage s'il ne l'est pas deja
+            foreach (string userIds in value.UserId)
+            {
+                ApplicationUser userToInvite = uow.UserRepository.GetByID(value.UserId);
+                // a verifier ce qui arrive si un seul ne fonctionne pas
+                if (userToInvite == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "l'id de l'utilisateur à inviter n'a retourné aucun résultats");
+                }
+
+                if (userToInvite.Trips.FirstOrDefault(x => x.Id == trip.Id) == null)
+                {
+                    userToInvite.Trips.Add(trip);
+                }
+            }
+            
+            
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

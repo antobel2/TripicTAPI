@@ -431,7 +431,6 @@ C:\Users\1507779\Desktop\webapi\Web API\bin\fr\Microsoft.AspNet.Identity.Core.re
 C:\Users\1507779\Desktop\webapi\Web API\bin\fr\Microsoft.AspNet.Identity.Owin.resources.dll
 C:\Users\1507779\Desktop\webapi\Web API\bin\fr\Microsoft.AspNet.Identity.EntityFramework.resources.dll
 C:\Users\1507779\Desktop\webapi\Web API\bin\fr\System.Web.Http.Owin.resources.dll
-C:\Users\1507779\Desktop\webapi\Web API\obj\Debug\Web API.csprojAssemblyReference.cache
 C:\Users\1507779\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CoreCompileInputs.cache
 C:\Users\1507779\Desktop\webapi\Web API\obj\Debug\Web API.csproj.CopyComplete
 C:\Users\1507779\Desktop\webapi\Web API\obj\Debug\Web API.dll
@@ -1001,3 +1000,4 @@ C:\Users\1507779\Desktop\nouveau clone\webapi\Web API\bin\fr\Microsoft.AspNet.Id
 C:\Users\1507779\Desktop\nouveau clone\webapi\Web API\bin\fr\Microsoft.AspNet.Identity.EntityFramework.resources.dll
 C:\Users\1507779\Desktop\nouveau clone\webapi\Web API\bin\fr\System.Web.Http.Owin.resources.dll
 C:\Users\1507779\Desktop\nouveau clone\webapi\Web API\obj\Debug\Web API.csproj.CopyComplete
+C:\Users\1507779\Desktop\webapi\Web API\obj\Debug\Web API.csprojAssemblyReference.cache

@@ -30,10 +30,26 @@ namespace Web_API.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public TripDTO toTripDTO(Trip trip)
+        {
+            TripDTO result = new TripDTO
+            {
+                Id = trip.Id,
+                Name = trip.Name
+            };
+            return result;
+        }
     }
 
     public class CreateTripDTO
     {
         public string Name { get; set; }
+    }
+
+    public class InviteUserToTripDTO
+    {
+        public List<string> UserId { get; set; }
+        public int TripId { get; set; }
     }
 }

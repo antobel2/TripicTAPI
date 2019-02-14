@@ -30,6 +30,16 @@ namespace Web_API.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public ActivityDTO toDto(Activity activity)
+        {
+            ActivityDTO results = new ActivityDTO
+            {
+                Id = activity.Id,
+                Name = activity.Name
+            };
+            return results;
+        }
     }
 
     public class CreateActivityDTO

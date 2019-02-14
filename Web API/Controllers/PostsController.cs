@@ -26,23 +26,23 @@ namespace Web_API.Controllers
         //private ApplicationDbContext db = new ApplicationDbContext();
         private UnitOfWork uow = new UnitOfWork();
         private IServicePosts servicePost;
-        private ApplicationUserManager userManager;
+        //private ApplicationUserManager userManager;
 
         public PostsController()
         {
             this.servicePost = new ServicePosts(uow);
         }
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                userManager = value;
-            }
-        }
+        //public ApplicationUserManager UserManager
+        //{
+        //    get
+        //    {
+        //        return userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        //    }
+        //    private set
+        //    {
+        //        userManager = value;
+        //    }
+        //}
 
 
 
@@ -70,7 +70,7 @@ namespace Web_API.Controllers
         // POST api/values
         //Crée un post, y ajoute le texte s'il y en a, renvoie une réponse et le id si le post est bien créé
         [HttpPost]
-        [Route("api/Post/CreatePost")]
+        [Route("api/Posts/CreatePost")]
         public HttpResponseMessage CreatePost([FromBody]CreatePostDTO value)
         {
             string currentUserId = User.Identity.GetUserId();
