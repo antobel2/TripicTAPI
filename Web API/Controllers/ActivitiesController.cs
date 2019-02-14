@@ -58,15 +58,18 @@ namespace Web_API.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id de l'activité n'a retourné aucun resultats");
             }
+            ActivityDTO result = new ActivityDTO();
+            result = result.toDto(activity);
             
-            return Request.CreateResponse(activity);
+            return Request.CreateResponse(result);
         }
 
         
 
         // POST: api/Activities
         [HttpPost]
-        [Route("api/Activity/CreateActivity")]
+        [Authorize]
+        [Route("api/Activities/CreateActivity")]
         public HttpResponseMessage CreateActivity([FromBody]CreateActivityDTO value)
         {
             if (!ModelState.IsValid)
@@ -86,72 +89,12 @@ namespace Web_API.Controllers
                 }
             }
 
-            activity.Trip = uow.TripRepository.dbSet.Find(value.TripId);
-            // activity.Trip = db.Trips.Find(value.TripId);
+            activity.Trip = uow.TripRepository.GetByID(value.TripId);
             activity.Posts = new List<Post>();
-
-            //uow.ActivityRepository.dbSet.Add(activity);
-            //uow.ActivityRepository.context.SaveChanges();
-            //db.Activities.Add(activity);
-            //db.SaveChanges();
+            
             uow.ActivityRepository.Insert(activity);
 
             return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-
-        [Route("api/Activity/getActivitiesForTrip/{id}")]
-        [HttpGet]
-        [ResponseType(typeof(List<TripDTO>))]
-        public HttpResponseMessage GetActivitiesForTrip(int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
-
-            Trip trip = uow.TripRepository.GetByID(id);
-            List<ActivityDTO> activityDTOs = new List<ActivityDTO>();
-            foreach (Activity a in trip.Activities)
-            {
-                ActivityDTO act = new ActivityDTO
-                {
-                    Id = a.Id,
-                    Name = a.Name
-                };
-                activityDTOs.Add(act);
-            }
-            return Request.CreateResponse(activityDTOs);
-        }
-
-        // DELETE: api/Activities/5
-        [ResponseType(typeof(Activity))]
-        public IHttpActionResult DeleteActivity(int id)
-        {
-            Activity activity = db.Activities.Find(id);
-            if (activity == null)
-            {
-                return NotFound();
-            }
-
-            db.Activities.Remove(activity);
-            db.SaveChanges();
-
-            return Ok(activity);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool ActivityExists(int id)
-        {
-            return db.Activities.Count(e => e.Id == id) > 0;
         }
     }
 }
