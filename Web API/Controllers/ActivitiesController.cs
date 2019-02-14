@@ -78,16 +78,14 @@ namespace Web_API.Controllers
             }
 
 
-            Activity activity = new Activity(value.Name.Trim());
-
-            var activities = uow.ActivityRepository.dbSet.ToArray();
-            foreach (Activity act in activities)
+            if (value.Name.Length < 1 || value.Name.Length > 35)
             {
-                if (act.Name == value.Name)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, "Une activité avec ce nom existe déjà dans le voyage");
-                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'activité doit avoir un nom comptant entre 1 et 35 caractères");
             }
+
+            Activity activity = new Activity(value.Name.Trim());
+            
+            var activities = uow.ActivityRepository.dbSet.ToArray();
 
             activity.Trip = uow.TripRepository.GetByID(value.TripId);
             activity.Posts = new List<Post>();

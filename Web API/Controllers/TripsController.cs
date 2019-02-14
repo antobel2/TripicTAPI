@@ -76,19 +76,17 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
+
+            if (value.Name.Length < 1 || value.Name.Length > 35)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le voyage doit avoir un nom comptant entre 1 et 35 caractères");
+            }
+
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
 
             var tripResults = uow.TripRepository.dbSet.ToArray();
             value.Name = value.Name.Trim();
-            //var tripResults = db.Trips.ToList();
-            foreach (Trip i in tripResults)
-            {
-                if (i.Name == value.Name)
-                {
-                    value.Name += " (" + DateTime.Now + ")";
-                }
-            }
 
             Trip trip = new Trip(value.Name);
 
