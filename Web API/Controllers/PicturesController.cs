@@ -34,7 +34,6 @@ namespace Web_API.Controllers
 
         //Permet de retourner la photo demandée par son Id
         [HttpGet]
-        [Authorize]
         [Route("api/Pictures/GetPictureFromId/{id}")]
         public HttpResponseMessage GetPictureFromId(int id)
         {
@@ -47,8 +46,10 @@ namespace Web_API.Controllers
             {
                 image = Image.FromStream(ms);
 
-                result = new HttpResponseMessage(HttpStatusCode.OK);
-                result.Content = new ByteArrayContent(ms.ToArray());
+                result = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new ByteArrayContent(ms.ToArray())
+                };
                 result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
             }
             return result;
@@ -74,7 +75,7 @@ namespace Web_API.Controllers
         }
 
         //Obtient le type de fichier du fichier et vérifie qu'il s'agit des bons types de fichiers
-        private static String extractMimeType(String s)
+        private static String ExtractMimeType(String s)
         {
             //Détermine où se trouve la string requise
             int extentionStartIndex = s.IndexOf('/');
@@ -91,7 +92,7 @@ namespace Web_API.Controllers
         }
 
         //Obtient l'extension du fichier et vérifie qu'elle est valide
-        private static String extractExtension(String s)
+        private static String ExtractExtension(String s)
         {
             //Détermine où se trouve la string requise
             int extentionStartIndex = s.IndexOf('/');
@@ -122,17 +123,19 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Image vide");
             else if (!IsBase64String(value.Base64))
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'information doit contenir une string de Base64");
-            else if (extractExtension(value.Base64) == null)
+            else if (ExtractExtension(value.Base64) == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'image doit être au format .png, .jpeg ou .gif");
-            else if (extractMimeType(value.Base64) == null)
+            else if (ExtractMimeType(value.Base64) == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le média doit être une image");
             
             //Si tout passe, crée la photo à partir du body de la réponse, l'ajoute à la bd et renvoie un code 200 au client
             else
             {
-                Picture p = new Picture();
-                p.Base64 = value.Base64;
-                p.Post = uow.PostRepository.GetByID(value.PostId);
+                Picture p = new Picture
+                {
+                    Base64 = value.Base64,
+                    Post = uow.PostRepository.GetByID(value.PostId)
+                };
                 uow.PictureRepository.Insert(p);
 
                 

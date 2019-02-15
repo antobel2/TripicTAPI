@@ -49,6 +49,7 @@ namespace Web_API.Controllers
         // GET api/values
         //Retourne la liste des posts de l'utilisateur
         [HttpGet]
+        [Authorize]
         [Route("api/Posts")]
         public IEnumerable<PostDTO> GetPosts()
         {
@@ -70,6 +71,7 @@ namespace Web_API.Controllers
         // POST api/values
         //Crée un post, y ajoute le texte s'il y en a, renvoie une réponse et le id si le post est bien créé
         [HttpPost]
+        [Authorize]
         [Route("api/Posts/CreatePost")]
         public HttpResponseMessage CreatePost([FromBody]CreatePostDTO value)
         {
@@ -125,6 +127,7 @@ namespace Web_API.Controllers
 
         [Route("api/Posts/GetPostsForActivity/{id}")]
         [HttpGet]
+        [Authorize]
         [ResponseType(typeof(List<PostDTO>))]
         public HttpResponseMessage GetPostsForActivity(int id)
         {
