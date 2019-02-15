@@ -6,6 +6,7 @@
 /Web API/App_Data/autrebd_log.ldf
 /Web API/.vs/Web/API/v15/*
 .vs/*
+.vs/
 /Web API/Web API/bin/*
 /Web API/Web API/obj/Debug/*
 /Web API/WebAPI.Tests/bin/Debug/*
