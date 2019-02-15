@@ -24,6 +24,7 @@ namespace Web_API.Models
         public string LastName { get; set; }
         public virtual List<Trip> Trips { get; set; }
         public virtual List<Post> Posts { get; set; }
+        public virtual List<SeenTrips> SeenTrips { get; set; }
     }
 
     public class SignedInUserDTO

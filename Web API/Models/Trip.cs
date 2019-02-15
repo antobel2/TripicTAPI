@@ -15,6 +15,7 @@ namespace Web_API.Models
         public DateTime Date { get; set; }
         public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<Activity> Activities { get; set; }
+        public virtual List<SeenTrips> SeenTrips { get; set; }
 
         public Trip()
         {
@@ -24,6 +25,7 @@ namespace Web_API.Models
         {
             Name = name;
             Users = new List<ApplicationUser>();
+            SeenTrips = new List<SeenTrips>();
         }
     }
 
@@ -31,13 +33,15 @@ namespace Web_API.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public Boolean Seen { get; set; }
 
         public TripDTO toTripDTO(Trip trip)
         {
             TripDTO result = new TripDTO
             {
                 Id = trip.Id,
-                Name = trip.Name
+                Name = trip.Name,
+                Seen = false
             };
             return result;
         }

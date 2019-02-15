@@ -38,7 +38,11 @@ namespace Web_API.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur n'à pas les droits d'accès sur le voyage");
             }
-            
+
+
+            currentUser.SeenTrips.Find(x => x.TripId == trip.Id && x.UserId == currentUser.Id).Seen = true;
+            uow.Save();
+
             List<ActivityDTO> results = new List<ActivityDTO>();
             foreach (Activity activity in trip.Activities.OrderByDescending(a => a.Date))
             {
@@ -50,7 +54,6 @@ namespace Web_API.Controllers
         }
 
         [Route("api/Activities/GetActivityById/{id}")]
-        [Authorize]
         public HttpResponseMessage GetActivityById(int id)
         {
             //Trouver l'activité
@@ -61,11 +64,11 @@ namespace Web_API.Controllers
             }
             ActivityDTO result = new ActivityDTO();
             result = result.toDto(activity);
-            
+
             return Request.CreateResponse(result);
         }
 
-        
+
 
         // POST: api/Activities
         [HttpPost]
@@ -88,7 +91,7 @@ namespace Web_API.Controllers
             activity.Date = DateTime.Now;
             activity.Trip = uow.TripRepository.GetByID(value.TripId);
             activity.Posts = new List<Post>();
-            
+
             uow.ActivityRepository.Insert(activity);
 
             return Request.CreateResponse(HttpStatusCode.OK);

@@ -84,22 +84,32 @@ namespace Web_API.Controllers
 
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-            
+
             value.Name = value.Name.Trim();
 
             Trip trip = new Trip(value.Name);
             trip.Date = DateTime.Now;
             trip.Users.Add(currentUser);
 
+
             uow.TripRepository.Insert(trip);
             //lié le voyage crée a l'utilisateur
             currentUser.Trips.Add(trip);
+            SeenTrips seen = new SeenTrips
+            {
+                Seen = true,
+                Trip = trip,
+                User = currentUser
+            };
+            currentUser.SeenTrips.Add(seen);
+            uow.Save();
+
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         [Route("api/Trips/InviteUserToTrip")]
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public HttpResponseMessage InviteUserToTrip([FromBody]InviteUserToTripDTO value)
         {
@@ -121,7 +131,7 @@ namespace Web_API.Controllers
             //Ajouter un utilisateur a un voyage s'il ne l'est pas deja
             foreach (string userIds in value.UserId)
             {
-                ApplicationUser userToInvite = uow.UserRepository.GetByID(value.UserId);
+                ApplicationUser userToInvite = uow.UserRepository.GetByID(userIds);
                 // a verifier ce qui arrive si un seul ne fonctionne pas
                 if (userToInvite == null)
                 {
@@ -131,10 +141,18 @@ namespace Web_API.Controllers
                 if (userToInvite.Trips.FirstOrDefault(x => x.Id == trip.Id) == null)
                 {
                     userToInvite.Trips.Add(trip);
+                    SeenTrips seen = new SeenTrips
+                    {
+                        Seen = false,
+                        Trip = trip,
+                        User = userToInvite
+                    };
+                    userToInvite.SeenTrips.Add(seen);
+                    uow.Save();
                 }
             }
-            
-            
+
+
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
