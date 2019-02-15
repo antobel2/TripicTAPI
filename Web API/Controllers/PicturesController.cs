@@ -34,7 +34,8 @@ namespace Web_API.Controllers
 
         //Permet de retourner la photo demandée par son Id
         [HttpGet]
-        [Route("api/Picture/GetPictureFromId/{id}")]
+        [Authorize]
+        [Route("api/Pictures/GetPictureFromId/{id}")]
         public HttpResponseMessage GetPictureFromId(int id)
         {
 
@@ -108,7 +109,8 @@ namespace Web_API.Controllers
 
         //Crée la photo après avoir vérifie qu'elle passe toutes les étapes de validation
         [HttpPost]
-        [Route("api/Picture/CreatePicture")]
+        [Authorize]
+        [Route("api/Pictures/CreatePicture")]
         public HttpResponseMessage CreatePicture([FromBody]CreatePictureDTO value)
         {
             //Valide les informations fournies
@@ -146,7 +148,8 @@ namespace Web_API.Controllers
 
         //Permet de retourner les photos associées à un post
         [HttpGet]
-        [Route("api/Picture/{id}")]
+        [Authorize]
+        [Route("api/Pictures/{id}")]
         public HttpResponseMessage GetPicturesByPost(int id)
         {
             var data = uow.PictureRepository.Get(a => a.Post.Id == id)

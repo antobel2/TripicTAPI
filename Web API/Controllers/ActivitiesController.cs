@@ -85,8 +85,6 @@ namespace Web_API.Controllers
 
             Activity activity = new Activity(value.Name.Trim());
             activity.Date = DateTime.Now;
-            var activities = uow.ActivityRepository.dbSet.ToArray();
-
             activity.Trip = uow.TripRepository.GetByID(value.TripId);
             activity.Posts = new List<Post>();
             

@@ -84,12 +84,12 @@ namespace Web_API.Controllers
 
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-
-            var tripResults = uow.TripRepository.dbSet.ToArray();
+            
             value.Name = value.Name.Trim();
 
             Trip trip = new Trip(value.Name);
             trip.Date = DateTime.Now;
+            trip.Users.Add(currentUser);
 
             uow.TripRepository.Insert(trip);
             //lié le voyage crée a l'utilisateur

@@ -23,6 +23,7 @@ namespace Web_API.Models
         public Trip(string name)
         {
             Name = name;
+            Users = new List<ApplicationUser>();
         }
     }
 
