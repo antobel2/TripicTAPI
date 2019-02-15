@@ -319,7 +319,7 @@ namespace Web_API.Controllers
             return logins;
         }
 
-        // POST api/Account/Register
+       // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
@@ -329,11 +329,16 @@ namespace Web_API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (UserManager.FindByName(model.UserName) != null)
+            {
+                return Conflict();
+            }
+
             var user = new ApplicationUser() {
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = "plzlet"+model.UserName+"live@misantrophie.com",
+                Email = model.UserName+"@coolkidsclub.com",
                 EmailConfirmed = true
             };
 
@@ -344,13 +349,7 @@ namespace Web_API.Controllers
                 return GetErrorResult(result);
             }
 
-            return Ok(new SignedInUserDTO
-            {
-                UUID = UserManager.FindByName(user.UserName).Id,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            });
+            return Ok();
         }
 
         // POST api/Account/RegisterExternal
