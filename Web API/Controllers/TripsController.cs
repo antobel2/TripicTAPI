@@ -33,6 +33,8 @@ namespace Web_API.Controllers
             {
                 TripDTO toDto = new TripDTO();
                 toDto = toDto.toTripDTO(trip);
+                SeenTrips seenStatus = currentUser.SeenTrips.Find(x => x.TripId == trip.Id && x.UserId == currentUser.Id);
+                toDto.Seen = seenStatus.Seen;
                 results.Add(toDto);
             }
 
