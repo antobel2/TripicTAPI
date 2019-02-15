@@ -54,6 +54,7 @@ namespace Web_API.Controllers
         }
 
         [Route("api/Activities/GetActivityById/{id}")]
+        [Authorize]
         public HttpResponseMessage GetActivityById(int id)
         {
             //Trouver l'activité
