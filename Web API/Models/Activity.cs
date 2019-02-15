@@ -12,7 +12,7 @@ namespace Web_API.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-
+        public DateTime Date { get; set; }
         public virtual Trip Trip { get; set; }
 
         public virtual List<Post> Posts { get; set; }

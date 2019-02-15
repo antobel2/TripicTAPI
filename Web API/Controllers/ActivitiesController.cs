@@ -40,7 +40,7 @@ namespace Web_API.Controllers
             }
             
             List<ActivityDTO> results = new List<ActivityDTO>();
-            foreach (Activity activity in trip.Activities)
+            foreach (Activity activity in trip.Activities.OrderByDescending(a => a.Date))
             {
                 ActivityDTO res = new ActivityDTO();
                 res = res.toDto(activity);
@@ -84,7 +84,7 @@ namespace Web_API.Controllers
             }
 
             Activity activity = new Activity(value.Name.Trim());
-            
+            activity.Date = DateTime.Now;
             var activities = uow.ActivityRepository.dbSet.ToArray();
 
             activity.Trip = uow.TripRepository.GetByID(value.TripId);

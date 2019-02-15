@@ -29,7 +29,7 @@ namespace Web_API.Controllers
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
             List<TripDTO> results = new List<TripDTO>();
-            foreach (Trip trip in currentUser.Trips)
+            foreach (Trip trip in currentUser.Trips.OrderByDescending(t => t.Date))
             {
                 TripDTO toDto = new TripDTO();
                 toDto = toDto.toTripDTO(trip);
@@ -89,6 +89,7 @@ namespace Web_API.Controllers
             value.Name = value.Name.Trim();
 
             Trip trip = new Trip(value.Name);
+            trip.Date = DateTime.Now;
 
             uow.TripRepository.Insert(trip);
             //lié le voyage crée a l'utilisateur
