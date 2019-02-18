@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -13,6 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using Web_API.DAL;
 using Web_API.Models;
 using Web_API.Providers;
 using Web_API.Results;
@@ -25,17 +27,30 @@ namespace Web_API.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
-
-        public AccountController()
-        {
-            
-        }
+        private UnitOfWork uow = new UnitOfWork();
 
         public AccountController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
+        }
+
+        [HttpGet]
+        [Route("FindUsers/{searchParams}")]
+        public IEnumerable<ApplicationUser> GetApplicationUsers(string searchParams)
+        {
+            int numberOfUsers = 10;
+
+            List<ApplicationUser> users =
+                uow.UserRepository.Get().Where(
+                x => x.FirstName.Contains(searchParams) ||
+                x.LastName.Contains(searchParams) ||
+                x.UserName.Contains(searchParams))
+                .OrderBy(x => x.Posts.Count)
+                .Take(numberOfUsers).ToList();
+
+            return users;
         }
 
         public ApplicationUserManager UserManager
