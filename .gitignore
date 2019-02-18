@@ -11,3 +11,5 @@
 /Web API/Web API/obj/Debug/*
 /Web API/WebAPI.Tests/bin/Debug/*
 /Web API/WebAPI.Tests/obj/Debug/*
+/Web API/WebAPI.Tests/obj/*
+WebAPI.Test/obj/*
