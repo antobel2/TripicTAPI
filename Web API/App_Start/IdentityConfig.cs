@@ -23,7 +23,7 @@ namespace Web_API
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
+                RequireUniqueEmail = false
             };
             // Configurer la logique de validation pour les mots de passe
             manager.PasswordValidator = new PasswordValidator

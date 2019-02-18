@@ -36,21 +36,38 @@ namespace Web_API.Controllers
             AccessTokenFormat = accessTokenFormat;
         }
 
+        public AccountController()
+        {
+
+        }
+
         [HttpGet]
         [Route("FindUsers/{searchParams}")]
-        public IEnumerable<ApplicationUser> GetApplicationUsers(string searchParams)
+        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(string searchParams)
         {
             int numberOfUsers = 10;
+            string loweredSearch = searchParams.ToLower();
+            List<UserSearchResultDTO> results = new List<UserSearchResultDTO>();
 
             List<ApplicationUser> users =
                 uow.UserRepository.Get().Where(
-                x => x.FirstName.Contains(searchParams) ||
-                x.LastName.Contains(searchParams) ||
-                x.UserName.Contains(searchParams))
+                x => x.FirstName.ToLower().StartsWith(loweredSearch) ||
+                x.LastName.StartsWith(loweredSearch) ||
+                x.UserName.StartsWith(loweredSearch))
                 .OrderBy(x => x.Posts.Count)
                 .Take(numberOfUsers).ToList();
 
-            return users;
+            foreach (ApplicationUser us in users)
+            {
+                results.Add(new UserSearchResultDTO{
+                    UserId = us.Id,
+                    UserName = us.UserName,
+                    FirstName = us.FirstName,
+                    LastName = us.LastName
+                });
+            }
+
+            return results;
         }
 
         public ApplicationUserManager UserManager
@@ -353,7 +370,7 @@ namespace Web_API.Controllers
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = model.UserName+"@coolkidsclub.com",
+                Email = "ilovedonuts"+"@coolkidsclub.com",
                 EmailConfirmed = true
             };
 
