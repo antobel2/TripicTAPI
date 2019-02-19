@@ -88,10 +88,12 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'activité doit avoir un nom comptant entre 1 et 35 caractères");
             }
 
-            Activity activity = new Activity(value.Name.Trim());
-            activity.Date = DateTime.Now;
-            activity.Trip = uow.TripRepository.GetByID(value.TripId);
-            activity.Posts = new List<Post>();
+            Activity activity = new Activity(value.Name.Trim())
+            {
+                Date = DateTime.Now,
+                Trip = uow.TripRepository.GetByID(value.TripId),
+                Posts = new List<Post>()
+            };
 
             uow.ActivityRepository.Insert(activity);
 
