@@ -261,6 +261,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Picture.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\SeenPosts.cs" />
     <Compile Include="Models\SeenTrips.cs" />
     <Compile Include="Models\Trip.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />

@@ -49,6 +49,8 @@ namespace Web_API.Models
         public IEnumerable<int> IDTable { get; set; }
         public string Text { get; set; }
         public string Date { get; set; }
+        public string UserName { get; set; }
+        public Boolean Seen { get; set; }
 
         public PostDTO(Post p)
         {

@@ -25,6 +25,7 @@ namespace Web_API.Models
         public virtual List<Trip> Trips { get; set; }
         public virtual List<Post> Posts { get; set; }
         public virtual List<SeenTrips> SeenTrips { get; set; }
+        public virtual List<SeenPosts> SeenPosts { get; set; }
     }
 
     public class SignedInUserDTO

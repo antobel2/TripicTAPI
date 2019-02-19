@@ -52,8 +52,8 @@ namespace Web_API.Controllers
             List<ApplicationUser> users =
                 uow.UserRepository.Get().Where(
                 x => x.FirstName.ToLower().StartsWith(loweredSearch) ||
-                x.LastName.StartsWith(loweredSearch) ||
-                x.UserName.StartsWith(loweredSearch))
+                x.LastName.ToLower().StartsWith(loweredSearch) ||
+                x.UserName.ToLower().StartsWith(loweredSearch))
                 .OrderBy(x => x.Posts.Count)
                 .Take(numberOfUsers).ToList();
 

@@ -61,6 +61,9 @@ namespace Web_API.Controllers
             {
                 if (post.IsValid == true)
                 {
+                    PostDTO dto = servicePost.ToPostDTO(post);
+                    SeenPosts seenStatus = currentUser.SeenPosts.Find(x => x.PostId == post.Id && x.UserId == currentUser.Id);
+                    dto.Seen = seenStatus.Seen;
                     postsDTO.Add(servicePost.ToPostDTO(post));
                 }
 
@@ -101,6 +104,15 @@ namespace Web_API.Controllers
             try
             {
                 servicePost.CreatePost(po);
+                currentUser.Posts.Add(po);
+                SeenPosts seen = new SeenPosts
+                {
+                    Seen = true,
+                    Post = po,
+                    User = currentUser
+                };
+                currentUser.SeenPosts.Add(seen);
+                uow.Save();
             }
             catch (DbEntityValidationException ex)
             {
@@ -138,7 +150,7 @@ namespace Web_API.Controllers
             Activity activity = uow.ActivityRepository.GetByID(id);
             if (activity == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The activity was not found");
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'activité n'a pas été trouvée");
             }
 
             List<Post> postsInActivity = servicePost.GetPostsForActivity(activity).OrderByDescending(x => x.Date).ToList();
@@ -147,10 +159,49 @@ namespace Web_API.Controllers
             List<PostDTO> results = new List<PostDTO>();
             foreach (Post post in postsInActivity)
             {
-                results.Add(servicePost.ToPostDTO(post));
+                PostDTO dto = servicePost.ToPostDTO(post);
+                SeenPosts seenStatus = currentUser.SeenPosts.Find(x => x.PostId == post.Id && x.UserId == currentUser.Id);
+                if (seenStatus == null)
+                {
+                    dto.Seen = false;
+                }
+                else
+                {
+                    dto.Seen = true;
+                }
+                results.Add(dto);
             }
 
             return Request.CreateResponse(results);
+        }
+
+        [Route("api/Posts/postWasSeen/{id}")]
+        [HttpGet]
+        [Authorize]
+        public HttpResponseMessage PostWasSeen(int id)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+
+            Post post = uow.PostRepository.GetByID(id);
+            if (post == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "La publication n'a pas été trouvée ");
+            }
+            SeenPosts wasAlreadySeen = currentUser.SeenPosts.Where(x => x.Post == post).FirstOrDefault();
+            if (wasAlreadySeen == null)
+            {
+                SeenPosts seen = new SeenPosts
+                {
+                    Seen = true,
+                    Post = post,
+                    User = currentUser
+                };
+                currentUser.SeenPosts.Add(seen);
+                uow.Save();
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

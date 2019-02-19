@@ -153,10 +153,30 @@ namespace Web_API.Controllers
                     uow.Save();
                 }
             }
-
-
-
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [Route("api/Trips/GetUsersForTrip/{id}")]
+        public HttpResponseMessage GetUsersForTrip(int id)
+        {
+            Trip trip = uow.TripRepository.GetByID(id);
+            if (trip == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du voyage n'a retourné aucun résultats");
+            }
+            List<SignedInUserDTO> results = new List<SignedInUserDTO>();
+            foreach (ApplicationUser user in trip.Users)
+            {
+                SignedInUserDTO a = new SignedInUserDTO()
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserName = user.UserName,
+                    UUID = user.Id
+                };
+                results.Add(a);
+            }
+            return Request.CreateResponse(results);
         }
     }
 }
