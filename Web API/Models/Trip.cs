@@ -40,8 +40,7 @@ namespace Web_API.Models
             TripDTO result = new TripDTO
             {
                 Id = trip.Id,
-                Name = trip.Name,
-                Seen = false
+                Name = trip.Name
             };
             return result;
         }
