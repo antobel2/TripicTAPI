@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -13,6 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using Web_API.DAL;
 using Web_API.Models;
 using Web_API.Providers;
 using Web_API.Results;
@@ -25,17 +27,47 @@ namespace Web_API.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
-
-        public AccountController()
-        {
-            
-        }
+        private UnitOfWork uow = new UnitOfWork();
 
         public AccountController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
+        }
+
+        public AccountController()
+        {
+
+        }
+
+        [HttpGet]
+        [Route("FindUsers/{searchParams}")]
+        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(string searchParams)
+        {
+            int numberOfUsers = 10;
+            string loweredSearch = searchParams.ToLower();
+            List<UserSearchResultDTO> results = new List<UserSearchResultDTO>();
+
+            List<ApplicationUser> users =
+                uow.UserRepository.Get().Where(
+                x => x.FirstName.ToLower().StartsWith(loweredSearch) ||
+                x.LastName.ToLower().StartsWith(loweredSearch) ||
+                x.UserName.ToLower().StartsWith(loweredSearch))
+                .OrderBy(x => x.Posts.Count)
+                .Take(numberOfUsers).ToList();
+
+            foreach (ApplicationUser us in users)
+            {
+                results.Add(new UserSearchResultDTO{
+                    UserId = us.Id,
+                    UserName = us.UserName,
+                    FirstName = us.FirstName,
+                    LastName = us.LastName
+                });
+            }
+
+            return results;
         }
 
         public ApplicationUserManager UserManager
@@ -338,7 +370,7 @@ namespace Web_API.Controllers
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = model.UserName+"@coolkidsclub.com",
+                Email = "ilovedonuts"+"@coolkidsclub.com",
                 EmailConfirmed = true
             };
 

@@ -14,6 +14,14 @@ namespace Web_API.Models
         public string State { get; set; }
     }
 
+    public class UserSearchResultDTO
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+
     public class ManageInfoViewModel
     {
         public string LocalLoginProvider { get; set; }
