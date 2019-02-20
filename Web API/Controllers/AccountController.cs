@@ -168,6 +168,22 @@ namespace Web_API.Controllers
             return Ok();
         }
 
+        [Route("CurrentUser")]
+        [HttpGet]
+        public HttpResponseMessage GetCurrentUser()
+        {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+
+            SignedInUserDTO result = new SignedInUserDTO
+            {
+                FirstName = currentUser.FirstName,
+                LastName = currentUser.LastName,
+            };
+
+            return Request.CreateResponse(result);
+        }
+
         // POST api/Account/SetPassword
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)

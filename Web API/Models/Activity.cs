@@ -44,7 +44,12 @@ namespace Web_API.Models
 
     public class CreateActivityDTO
     {
+        [Required(AllowEmptyStrings = false, ErrorMessage = "L'activité doit avoir un nom comptant entre 1 et 35 caractères")]
+        [MinLength(1, ErrorMessage = "L'activité doit avoir un nom comptant au moins 1 caractère")]
+        [MaxLength(35, ErrorMessage = "L'activité doit avoir un nom comptant au plus 35 caractère")]
         public string Name { get; set; }
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Il est impossible de créer une activité sans l'associer à un voyage")]
         public int TripId { get; set; }
     }
 }

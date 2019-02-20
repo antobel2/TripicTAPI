@@ -17,7 +17,6 @@ namespace Web_API.Controllers
     public class ActivitiesController : ApiController
     {
         private UnitOfWork uow = new UnitOfWork();
-        // private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Activities
         [Route("api/Activities/GetActivitiesForTrip/{id}")]
@@ -82,13 +81,16 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-
-            if (value.Name.Length < 1 || value.Name.Length > 35)
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == value.TripId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'activité doit avoir un nom comptant entre 1 et 35 caractères");
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur n'à pas les droits d'accès sur le voyage");
             }
 
-            Activity activity = new Activity(value.Name.Trim())
+            string name = value.Name.Trim();
+
+            Activity activity = new Activity(name)
             {
                 Date = DateTime.Now,
                 Trip = uow.TripRepository.GetByID(value.TripId),
