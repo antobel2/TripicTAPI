@@ -21,7 +21,7 @@ using Web_API.Results;
 
 namespace Web_API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
@@ -41,33 +41,34 @@ namespace Web_API.Controllers
 
         }
 
+        /// <summary>
+        /// Retournes le top 10 des utilisateurs qui ne sont pas dans le voyage selon le string passé
+        /// </summary>
+        /// <param name="tripId">id du trip à vérifier l'authenticité</param>
+        /// <param name="searchParams">nom, prénom ou username à rechercher</param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("FindUsers/{searchParams}")]
-        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(string searchParams)
+        [Route("FindUsers/{tripId}/{searchParams}")]
+        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(int tripId, string searchParams)
         {
             int numberOfUsers = 10;
             string loweredSearch = searchParams.ToLower();
             List<UserSearchResultDTO> results = new List<UserSearchResultDTO>();
 
-            List<ApplicationUser> users =
-                uow.UserRepository.Get().Where(
-                x => x.FirstName.ToLower().StartsWith(loweredSearch) ||
+            var query = uow.UserRepository.Get(
+                x => x.FirstName.ToLower().StartsWith(searchParams) ||
                 x.LastName.ToLower().StartsWith(loweredSearch) ||
-                x.UserName.ToLower().StartsWith(loweredSearch))
-                .OrderBy(x => x.Posts.Count)
-                .Take(numberOfUsers).ToList();
+                x.UserName.ToLower().StartsWith(loweredSearch)).OrderBy(a => a.Posts.Count);
 
-            foreach (ApplicationUser us in users)
-            {
-                results.Add(new UserSearchResultDTO{
-                    UserId = us.Id,
-                    UserName = us.UserName,
-                    FirstName = us.FirstName,
-                    LastName = us.LastName
+            return query.Take(numberOfUsers).Where(a => a.Trips.All(x => x.Id != tripId)).
+                Select(x => new UserSearchResultDTO
+                {
+                    UserId = x.Id,
+                    UserName = x.UserName,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName
                 });
-            }
 
-            return results;
         }
 
         public ApplicationUserManager UserManager
@@ -158,7 +159,7 @@ namespace Web_API.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -291,9 +292,9 @@ namespace Web_API.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -351,7 +352,7 @@ namespace Web_API.Controllers
             return logins;
         }
 
-       // POST api/Account/Register
+        // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
@@ -366,11 +367,12 @@ namespace Web_API.Controllers
                 return Conflict();
             }
 
-            var user = new ApplicationUser() {
+            var user = new ApplicationUser()
+            {
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = "ilovedonuts"+"@coolkidsclub.com",
+                Email = "ilovedonuts" + "@coolkidsclub.com",
                 EmailConfirmed = true
             };
 
@@ -412,7 +414,7 @@ namespace Web_API.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
