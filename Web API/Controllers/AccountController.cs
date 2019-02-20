@@ -48,19 +48,20 @@ namespace Web_API.Controllers
         /// <param name="searchParams">nom, prénom ou username à rechercher</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("FindUsers/{tripId}/{searchParams}")]
-        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(int tripId, string searchParams)
+        [Route("FindUsers/{TripId}/{SearchParams}")]
+        public IEnumerable<UserSearchResultDTO> GetApplicationUsers(int TripId, string SearchParams)
         {
-            int numberOfUsers = 10;
-            string loweredSearch = searchParams.ToLower();
+            int NumberOfUsers = 10;
+            string LoweredSearch = SearchParams.ToLower();
             List<UserSearchResultDTO> results = new List<UserSearchResultDTO>();
 
             var query = uow.UserRepository.Get(
-                x => x.FirstName.ToLower().StartsWith(searchParams) ||
-                x.LastName.ToLower().StartsWith(loweredSearch) ||
-                x.UserName.ToLower().StartsWith(loweredSearch)).OrderBy(a => a.Posts.Count);
+                x => x.FirstName.ToLower().StartsWith(SearchParams) ||
+                x.LastName.ToLower().StartsWith(LoweredSearch) ||
+                x.UserName.ToLower().StartsWith(LoweredSearch))
+                .OrderBy(a => a.Posts.Count);
 
-            return query.Take(numberOfUsers).Where(a => a.Trips.All(x => x.Id != tripId)).
+            return query.Take(NumberOfUsers).Where(a => a.Trips.All(x => x.Id != TripId)).
                 Select(x => new UserSearchResultDTO
                 {
                     UserId = x.Id,
