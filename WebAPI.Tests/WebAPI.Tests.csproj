@@ -72,7 +72,11 @@
     <Compile Include="PicturesControllerTest.cs" />
     <Compile Include="PostsControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+<<<<<<< HEAD
     <Compile Include="AccountControllerTest.cs" />
+=======
+    <Compile Include="TripControllerTest.cs" />
+>>>>>>> 9f12be8641859cb6bd18cc1f36af42a679021589
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

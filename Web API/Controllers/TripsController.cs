@@ -134,7 +134,6 @@ namespace Web_API.Controllers
             foreach (string userIds in value.UserId)
             {
                 ApplicationUser userToInvite = uow.UserRepository.GetByID(userIds);
-                // a verifier ce qui arrive si un seul ne fonctionne pas
                 if (userToInvite == null)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, "l'id de l'utilisateur à inviter n'a retourné aucun résultats");
