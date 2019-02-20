@@ -111,7 +111,7 @@ namespace Web_API.Controllers
         }
 
         [Route("api/Trips/InviteUserToTrip")]
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         public HttpResponseMessage InviteUserToTrip([FromBody]InviteUserToTripDTO value)
         {
@@ -131,12 +131,12 @@ namespace Web_API.Controllers
             }
 
             //Ajouter un utilisateur a un voyage s'il ne l'est pas deja
-            foreach (string userIds in value.UserId)
+            foreach (string userId in value.UserIds)
             {
-                ApplicationUser userToInvite = uow.UserRepository.GetByID(userIds);
+                ApplicationUser userToInvite = uow.UserRepository.GetByID(userId);
                 if (userToInvite == null)
                 {
-                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "l'id de l'utilisateur à inviter n'a retourné aucun résultats");
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id de l'utilisateur à inviter n'a retourné aucun résultats");
                 }
 
                 if (userToInvite.Trips.FirstOrDefault(x => x.Id == trip.Id) == null)
@@ -149,9 +149,10 @@ namespace Web_API.Controllers
                         User = userToInvite
                     };
                     userToInvite.SeenTrips.Add(seen);
-                    uow.Save();
+                    
                 }
             }
+            uow.Save();
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 

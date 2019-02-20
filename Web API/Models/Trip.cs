@@ -53,7 +53,7 @@ namespace Web_API.Models
 
     public class InviteUserToTripDTO
     {
-        public List<string> UserId { get; set; }
+        public List<string> UserIds { get; set; }
         public int TripId { get; set; }
     }
 }
