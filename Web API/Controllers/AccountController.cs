@@ -21,7 +21,7 @@ using Web_API.Results;
 
 namespace Web_API.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
