@@ -84,6 +84,14 @@ namespace Web_API.Controllers
             if (!ModelState.IsValid)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
+            //Vérifier que l'utilisateur a les droits sur le voyage
+            Activity currentActivity = uow.ActivityRepository.GetByID(value.ActivityId);
+            Trip currentTrip = uow.TripRepository.GetByID(currentActivity.Trip.Id);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == currentTrip.Id) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur actuel n'a pas les droits d'accès au voyage demandé");
+            }
+
             Post po = new Post();
 
             if (value.Text != null && value.Text.Trim() != "")
@@ -145,12 +153,19 @@ namespace Web_API.Controllers
         {
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-
+            
 
             Activity activity = uow.ActivityRepository.GetByID(id);
             if (activity == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'activité n'a pas été trouvée");
+            }
+
+            //Vérifier que l'utilisateur à le droit de demander les posts
+            var access = activity.Trip.Users.FirstOrDefault(x => x.Id == currentUser.Id);
+            if (access == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "l'utilisateur n'a pas les droits sur cette activité");
             }
 
             List<Post> postsInActivity = servicePost.GetPostsForActivity(activity).OrderByDescending(x => x.Date).ToList();
