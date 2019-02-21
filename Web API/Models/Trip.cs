@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using Web_API.Models.CustomValidationErrors;
 
 namespace Web_API.Models
 {
@@ -53,7 +54,9 @@ namespace Web_API.Models
 
     public class InviteUserToTripDTO
     {
+        [InviteUserToTripUserIdsError(ErrorMessage ="Le champ UserIds a ne doit pas être vide")]
         public List<string> UserIds { get; set; }
+        [Required]
         public int TripId { get; set; }
     }
 }

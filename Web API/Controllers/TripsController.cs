@@ -54,9 +54,7 @@ namespace Web_API.Controllers
             }
 
             //Vérifier que l'utilisateur a les droits sur le voyage
-            string currentUserId = User.Identity.GetUserId();
-            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-            if (currentUser.Trips.FirstOrDefault(x => x.Id == trip.Id) == null)
+            if (!UserHasTripPermitions(trip.Id))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur actuel n'a pas les droits d'accès au voyage demandé");
             }
@@ -115,21 +113,22 @@ namespace Web_API.Controllers
         [HttpPost]
         public HttpResponseMessage InviteUserToTrip([FromBody]InviteUserToTripDTO value)
         {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Le model InviteUserToTripDTO n'est pas valide");
+            }
             //Trouver le voyage
             Trip trip = uow.TripRepository.GetByID(value.TripId);
             if (trip == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du voyage n'a retourné aucun résultats");
             }
-
             //Vérifier que l'utilisateur a les droits sur le voyage
-            string currentUserId = User.Identity.GetUserId();
-            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-            if (currentUser.Trips.FirstOrDefault(x => x.Id == value.TripId) == null)
+            if (!UserHasTripPermitions(trip.Id))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur actuel n'a pas les droits d'accès au voyage demandé");
             }
-
+            
             //Ajouter un utilisateur a un voyage s'il ne l'est pas deja
             foreach (string userId in value.UserIds)
             {
@@ -177,6 +176,17 @@ namespace Web_API.Controllers
                 results.Add(a);
             }
             return Request.CreateResponse(results);
+        }
+
+        public Boolean UserHasTripPermitions(int tripId)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == tripId) == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

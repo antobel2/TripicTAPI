@@ -23,7 +23,7 @@ namespace WebAPI.Tests
             _controller = new TripsController();
         }
         [TestMethod]
-        public void CreateTrip_GoodValues_OK()
+        public void InviteUserToTrip_GoodValues_OK()
         {
             var testCreateTripDTO = new CreateTripDTO()
             {
@@ -31,7 +31,7 @@ namespace WebAPI.Tests
             };
             
             var config = new HttpConfiguration();
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/Trips/CreateTrip");
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/Trips/InviteUserToTrip");
             var route = config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}");
             var routeData = new HttpRouteData(route, new HttpRouteValueDictionary { { "controller", "Trips" } });
 
