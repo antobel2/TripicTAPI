@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivitiesControllerTest.cs" />
     <Compile Include="PicturesControllerTest.cs" />
     <Compile Include="PostsControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
