@@ -33,6 +33,8 @@ namespace Web_API.Models
 
         public virtual ApplicationUser User { get; set; }
 
+        public virtual List<Comment> Comments { get; set; }
+
         public Post()
         {
             Date = DateTime.Now;
@@ -49,7 +51,7 @@ namespace Web_API.Models
         public IEnumerable<int> IDTable { get; set; }
         public string Text { get; set; }
         public string Date { get; set; }
-        public string UserName { get; set; }
+        public string Name { get; set; }
         public Boolean Seen { get; set; }
 
         public PostDTO(Post p)

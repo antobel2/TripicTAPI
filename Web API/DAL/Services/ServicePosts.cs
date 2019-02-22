@@ -51,7 +51,7 @@ namespace Web_API.DAL.Services
             newPostDTO.Text = post.Text;
             newPostDTO.Id = post.Id;
             newPostDTO.IDTable = post.Pictures.Select(x => x.Id).ToList();
-            newPostDTO.UserName = post.User.UserName;
+            newPostDTO.Name = post.User.FirstName + " " + post.User.LastName;
             return newPostDTO;
         }
 

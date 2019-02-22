@@ -25,6 +25,7 @@ namespace Web_API.Models
         public virtual DbSet<Activity> Activities { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Picture> Pictures { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
     }
 
     public class Init : DropCreateDatabaseIfModelChanges<ApplicationDbContext>

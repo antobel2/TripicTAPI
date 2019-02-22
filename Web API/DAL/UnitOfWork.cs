@@ -15,6 +15,7 @@ namespace Web_API.DAL
         private GenericRepository<Picture> pictureRepo;
         private GenericRepository<Trip> tripRepo;
         private GenericRepository<ApplicationUser> userRepo;
+        private GenericRepository<Comment> commentRepo;
 
         public UnitOfWork()
         {
@@ -77,6 +78,18 @@ namespace Web_API.DAL
                     userRepo = new GenericRepository<ApplicationUser>(context);
                 }
                 return userRepo;
+            }
+        }
+
+        public GenericRepository<Comment> CommentRepository
+        {
+            get
+            {
+                if (commentRepo == null)
+                {
+                    commentRepo = new GenericRepository<Comment>(context);
+                }
+                return commentRepo;
             }
         }
 
