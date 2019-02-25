@@ -49,6 +49,12 @@ namespace Web_API.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du post n'a retourné aucun résultats");
             }
 
+            Post currentPost = uow.PostRepository.GetByID(value.PostId);
+            if (currentPost == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du post ne correspond à aucun post");
+            }
+
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
             if (currentUser.Trips.FirstOrDefault(x => x.Id == currentPost.Activity.Trip.Id) == null)
