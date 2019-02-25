@@ -42,10 +42,16 @@ namespace Web_API.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
+            
+            Post currentPost = uow.PostRepository.GetByID(value.PostId);
+            if (currentPost == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "L'id du post n'a retourné aucun résultats");
+            }
 
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
-            if (currentUser.Posts.FirstOrDefault(x => x.Id == value.PostId) == null)
+            if (currentUser.Trips.FirstOrDefault(x => x.Id == currentPost.Activity.Trip.Id) == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "L'utilisateur n'a pas accès à la publication");
             }
