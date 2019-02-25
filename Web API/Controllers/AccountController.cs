@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -175,6 +176,10 @@ namespace Web_API.Controllers
         {
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'utilisateur spécifié n'existe pas");
+            }
 
             SignedInUserDTO result = new SignedInUserDTO
             {

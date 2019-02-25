@@ -14,6 +14,8 @@ namespace Web_API.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public virtual List<ApplicationUser> Users { get; set; }
         public virtual List<Activity> Activities { get; set; }
         public virtual List<SeenTrips> SeenTrips { get; set; }
@@ -35,6 +37,8 @@ namespace Web_API.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public Boolean Seen { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public TripDTO toTripDTO(Trip trip)
         {
@@ -50,6 +54,8 @@ namespace Web_API.Models
     public class CreateTripDTO
     {
         public string Name { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 
     public class InviteUserToTripDTO

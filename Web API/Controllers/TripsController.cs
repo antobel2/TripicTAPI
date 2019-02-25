@@ -24,10 +24,15 @@ namespace Web_API.Controllers
         // GET: api/Trips
         [Route("api/Trips/GetTripsForUser")]
         [Authorize]
-        public List<TripDTO> GetTripsForUser()
+        public HttpResponseMessage GetTripsForUser()
         {
             string currentUserId = User.Identity.GetUserId();
             ApplicationUser currentUser = uow.UserRepository.GetByID(currentUserId);
+            if (currentUser == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "L'utilisateur spécifié n'existe pas");
+            }
+
             List<TripDTO> results = new List<TripDTO>();
             foreach (Trip trip in currentUser.Trips.OrderByDescending(t => t.Date))
             {
@@ -35,10 +40,12 @@ namespace Web_API.Controllers
                 toDto = toDto.toTripDTO(trip);
                 SeenTrips seenStatus = currentUser.SeenTrips.Find(x => x.TripId == trip.Id && x.UserId == currentUser.Id);
                 toDto.Seen = seenStatus.Seen;
+                toDto.Latitude = trip.Latitude;
+                toDto.Longitude = trip.Longitude;
                 results.Add(toDto);
             }
 
-            return results;
+            return Request.CreateResponse(results);
         }
 
         // GET: api/Trips/5
@@ -61,6 +68,8 @@ namespace Web_API.Controllers
 
             TripDTO result = new TripDTO();
             result = result.toTripDTO(trip);
+            result.Latitude = trip.Latitude;
+            result.Longitude = trip.Longitude;
 
             return Request.CreateResponse(result);
         }
@@ -90,6 +99,8 @@ namespace Web_API.Controllers
             Trip trip = new Trip(value.Name);
             trip.Date = DateTime.Now;
             trip.Users.Add(currentUser);
+            trip.Latitude = value.Latitude;
+            trip.Longitude = value.Longitude;
 
 
             uow.TripRepository.Insert(trip);
